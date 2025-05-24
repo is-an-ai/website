@@ -23,14 +23,6 @@ const HeroSection = () => {
           </div>
 
           <SubdomainChecker />
-
-          <p className="text-center text-xs text-gray-500">
-            Or check out the{" "}
-            <a href="#" className="underline hover:no-underline">
-              API docs
-            </a>{" "}
-            for programmatic access
-          </p>
         </div>
       </div>
     </section>

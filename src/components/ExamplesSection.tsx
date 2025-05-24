@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import ExampleCard from "./ExampleCard";
 
 const ExamplesSection = () => {
@@ -43,12 +44,12 @@ const ExamplesSection = () => {
         </div>
 
         <div className="text-center mt-8">
-          <a
-            href="#"
+          <Link
+            to="/examples"
             className="text-sm text-gray-600 hover:text-gray-900 underline hover:no-underline font-mono"
           >
             View all &gt;
-          </a>
+          </Link>
         </div>
       </div>
     </section>

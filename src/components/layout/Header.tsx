@@ -20,14 +20,14 @@ const Header = () => {
             >
               docs
             </Link>
-            <a
-              href="#"
+            <Link
+              to="/examples"
               className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
             >
               examples
-            </a>
+            </Link>
             <a
-              href="#"
+              href="https://github.com/is-an-ai"
               className="flex items-center text-gray-600 hover:text-gray-900 transition-colors font-mono"
             >
               <svg
