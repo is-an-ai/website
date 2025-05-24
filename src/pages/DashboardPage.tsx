@@ -1,12 +1,10 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubdomains } from "@/hooks/useSubdomains";
-import { useRouter } from "next/navigation";
 
 const DashboardPage: React.FC = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
   const { subdomains, isLoading, error, fetchMySubdomains, clearError } =
     useSubdomains();
@@ -15,14 +13,14 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      router.push("/");
+      navigate("/");
       return;
     }
 
     if (isAuthenticated) {
       fetchMySubdomains();
     }
-  }, [isAuthenticated, authLoading, router, fetchMySubdomains]);
+  }, [isAuthenticated, authLoading, navigate, fetchMySubdomains]);
 
   if (authLoading) {
     return (

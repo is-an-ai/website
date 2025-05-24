@@ -50,7 +50,7 @@ export const useSubdomains = (): UseSubdomainsReturn => {
         }
 
         // Simple validation for subdomain format
-        const subdomainRegex = /^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?$/i;
+        const subdomainRegex = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/i;
         if (!subdomainRegex.test(name)) {
           throw new Error(
             "Invalid subdomain format. Use only letters, numbers, and hyphens."
@@ -72,6 +72,21 @@ export const useSubdomains = (): UseSubdomainsReturn => {
     []
   );
 
+  const fetchMySubdomains = useCallback(async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const data = await apiClient.getMySubdomains();
+      setSubdomains(data);
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || "Failed to fetch subdomains");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const createSubdomain = useCallback(
     async (data: CreateSubdomainRequest): Promise<void> => {
       try {
@@ -90,23 +105,8 @@ export const useSubdomains = (): UseSubdomainsReturn => {
         setIsLoading(false);
       }
     },
-    []
+    [fetchMySubdomains]
   );
-
-  const fetchMySubdomains = useCallback(async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const data = await apiClient.getMySubdomains();
-      setSubdomains(data);
-    } catch (err) {
-      const apiError = err as ApiError;
-      setError(apiError.message || "Failed to fetch subdomains");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   return {
     // State

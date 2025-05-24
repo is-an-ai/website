@@ -1,8 +1,15 @@
 # is-an.ai Frontend Setup
 
-## API Integration
+## Technology Stack
 
-This frontend integrates with the is-an.ai API for subdomain management and GitHub SSO authentication.
+This is a **React + Vite** application with TypeScript, providing a fast and lightweight frontend for the is-an.ai subdomain service.
+
+**Why Vite over Next.js?**
+
+- No SSR overhead or hosting costs
+- Faster development and build times
+- Simpler deployment (static files)
+- Perfect for client-side only applications
 
 ## Environment Variables
 
@@ -10,12 +17,14 @@ Create a `.env.local` file in the root directory with the following variables:
 
 ```env
 # API Configuration
-NEXT_PUBLIC_API_URL=https://api.is-an.ai
+VITE_API_URL=https://api.is-an.ai
 
 # GitHub OAuth Configuration (for production)
-NEXT_PUBLIC_GITHUB_CLIENT_ID=your_github_client_id_here
-NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/auth/callback
+VITE_GITHUB_CLIENT_ID=your_github_client_id_here
+VITE_GITHUB_REDIRECT_URI=http://localhost:3000/auth/callback
 ```
+
+**Note:** Vite uses `VITE_` prefix instead of `NEXT_PUBLIC_` for environment variables.
 
 ## Development Setup
 
@@ -40,6 +49,18 @@ npm run dev
 pnpm dev
 ```
 
+The app will be available at `http://localhost:3000`
+
+### 4. Build for Production
+
+```bash
+npm run build
+# or
+pnpm build
+```
+
+Built files will be in the `dist` directory.
+
 ## Features Implemented
 
 ### Core API Integration
@@ -60,7 +81,7 @@ pnpm dev
 
 - ✅ GitHub OAuth integration
 - ✅ Automatic token management
-- ✅ Protected routes
+- ✅ Protected routes with React Router
 - ✅ Session persistence
 
 ## API Endpoints Used
@@ -80,9 +101,15 @@ pnpm dev
 
 ## Component Architecture
 
+### Routing
+
+- **React Router** for client-side routing
+- **Protected routes** with authentication checks
+- **History API** for navigation
+
 ### Hooks
 
-- `useAuth` - Authentication state management
+- `useAuth` - Authentication state management with React Router
 - `useSubdomains` - Subdomain operations
 
 ### Components
@@ -91,6 +118,12 @@ pnpm dev
 - `BrowserMockup` - Reusable browser interface
 - Dashboard components for subdomain management
 
+### Pages
+
+- `HomePage` - Landing page with subdomain checker
+- `DashboardPage` - User dashboard for managing subdomains
+- `AuthCallbackPage` - GitHub OAuth callback handler
+
 ## Development Notes
 
 ### For Local Development
@@ -98,12 +131,40 @@ pnpm dev
 - Use the dev login button to authenticate without GitHub setup
 - The dev login endpoint (`/v1/dev/login`) works without authentication
 - All API errors are properly handled and displayed to users
+- Hot reload works perfectly with Vite
 
 ### For Production
 
 - Configure GitHub OAuth app with proper client ID
 - Set correct redirect URI for your domain
 - Update API base URL to production endpoint
+- Deploy static files from `dist` directory
+
+## Deployment
+
+Since this is now a static React app, you can deploy to:
+
+### Static Hosting Services
+
+- **Vercel** (recommended for simplicity)
+- **Netlify**
+- **GitHub Pages**
+- **AWS S3 + CloudFront**
+- **Any static file server**
+
+### Example Deployment Commands
+
+```bash
+# Build the app
+npm run build
+
+# The dist/ directory contains all static files
+# Upload these to your hosting provider
+```
+
+### Environment Variables in Production
+
+Make sure to set the `VITE_*` environment variables in your hosting provider's dashboard.
 
 ## Error Handling
 
@@ -121,3 +182,14 @@ The application includes comprehensive error handling:
 - CSRF protection with state parameter in OAuth flow
 - Input validation for subdomain names
 - Proper error handling without exposing sensitive data
+
+## Migration from Next.js
+
+This project was migrated from Next.js to Vite for:
+
+- **Cost savings** - No SSR hosting costs
+- **Performance** - Faster development builds
+- **Simplicity** - Static deployment
+- **Compatibility** - Works with any hosting provider
+
+All functionality remains the same, just with a lighter, faster foundation.

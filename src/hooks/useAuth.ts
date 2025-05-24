@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { User, AuthResponse, ApiError } from "@/types/api";
 import apiClient from "@/lib/api";
 
@@ -13,17 +14,16 @@ interface UseAuthReturn {
   clearError: () => void;
 }
 
-const GITHUB_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const GITHUB_REDIRECT_URI =
-  process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI ||
-  `${
-    typeof window !== "undefined" ? window.location.origin : ""
-  }/auth/callback`;
+  import.meta.env.VITE_GITHUB_REDIRECT_URI ||
+  `${window.location.origin}/auth/callback`;
 
 export const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   const clearError = useCallback(() => {
     setError(null);
@@ -137,9 +137,7 @@ export const useAuth = (): UseAuthReturn => {
 
   // Handle GitHub OAuth callback if we're on the callback page
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const code = urlParams.get("code");
     const state = urlParams.get("state");
     const error = urlParams.get("error");
@@ -150,10 +148,10 @@ export const useAuth = (): UseAuthReturn => {
       return;
     }
 
-    if (code && state && window.location.pathname === "/auth/callback") {
+    if (code && state && location.pathname === "/auth/callback") {
       handleGithubCallback(code, state);
     }
-  }, [handleGithubCallback]);
+  }, [location.search, location.pathname, handleGithubCallback]);
 
   return {
     user,
