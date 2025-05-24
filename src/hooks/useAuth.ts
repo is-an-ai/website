@@ -32,12 +32,10 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
   }, []);
 
-  // GitHub OAuth login - simplified redirect to backend
   const login = useCallback(() => {
     window.location.href = `${API_BASE_URL}/v1/user/auth/github`;
   }, []);
 
-  // Dev environment login
   const devLogin = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -53,7 +51,6 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  // Handle OAuth callback with token and user info in URL params
   const handleOAuthCallback = useCallback(() => {
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get("token");
@@ -66,14 +63,11 @@ export const useAuth = (): UseAuthReturn => {
     }
 
     try {
-      // Save token
       localStorage.setItem("auth_token", token);
 
-      // Decode user info
       const userInfo = JSON.parse(decodeURIComponent(encodedUser));
       setUser(userInfo);
 
-      // Clear URL params and redirect to dashboard
       window.history.replaceState({}, document.title, "/dashboard");
     } catch (err) {
       setError("Failed to process OAuth callback");
@@ -82,26 +76,20 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, [location.search]);
 
-  // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
         if (apiClient.isAuthenticated()) {
-          // Try to fetch user data to validate token
           await apiClient.getMySubdomains();
-          // If successful, we can assume the user is authenticated
-          // In a real app, you might have a separate endpoint to get current user
           setUser({ id: "current", name: "Authenticated User" });
         }
       } catch {
-        // Token is invalid, clear it
         apiClient.logout();
       } finally {
         setIsLoading(false);
       }
     };
 
-    // Handle OAuth callback
     if (location.pathname === "/auth/callback") {
       handleOAuthCallback();
       return;
@@ -110,7 +98,6 @@ export const useAuth = (): UseAuthReturn => {
     checkAuth();
   }, [location.pathname, handleOAuthCallback]);
 
-  // Listen for token expiration events
   useEffect(() => {
     const handleTokenExpired = () => {
       setUser(null);
@@ -123,7 +110,6 @@ export const useAuth = (): UseAuthReturn => {
     };
   }, []);
 
-  // Handle OAuth errors
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const error = urlParams.get("error");

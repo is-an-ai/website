@@ -146,7 +146,7 @@ class ApiClient {
       return false; // If we get a response, subdomain exists
     } catch (error) {
       const apiError = error as ApiError;
-      if (apiError.code === 40402) {
+      if (apiError.code === 404) {
         // SUBDOMAIN_NOT_FOUND
         return true; // Subdomain is available
       }

@@ -2,14 +2,35 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubdomains } from "@/hooks/useSubdomains";
+import CreateSubdomainModal from "@/components/CreateSubdomainModal";
+import Toast from "@/components/Toast";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
-  const { subdomains, isLoading, error, fetchMySubdomains, clearError } =
-    useSubdomains();
+  const {
+    subdomains,
+    isLoading,
+    error,
+    fetchMySubdomains,
+    clearError,
+    checkAvailability,
+    createSubdomain,
+    isCheckingAvailability,
+    availabilityResult,
+    clearAvailabilityResult,
+  } = useSubdomains();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -21,6 +42,32 @@ const DashboardPage = () => {
       fetchMySubdomains();
     }
   }, [isAuthenticated, authLoading, navigate, fetchMySubdomains]);
+
+  const handleCloseModal = () => {
+    setShowCreateForm(false);
+    clearAvailabilityResult();
+    clearError();
+  };
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "info" = "success"
+  ) => {
+    setToast({ message, type, isVisible: true });
+  };
+
+  const hideToast = () => {
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
+  const handleCopySubdomain = async (subdomainName: string) => {
+    try {
+      await navigator.clipboard.writeText(`${subdomainName}.is-an.ai`);
+      showToast("Subdomain copied to clipboard!");
+    } catch (err) {
+      showToast("Failed to copy to clipboard", "error");
+    }
+  };
 
   if (authLoading) {
     return (
@@ -106,7 +153,7 @@ const DashboardPage = () => {
         )}
 
         {/* Subdomains section */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-xl shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">
@@ -114,7 +161,7 @@ const DashboardPage = () => {
               </h2>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
               >
                 Add Subdomain
               </button>
@@ -150,36 +197,65 @@ const DashboardPage = () => {
                 </p>
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
                 >
                   Create Subdomain
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {subdomains.map((subdomain) => (
                   <div
                     key={subdomain.subdomainId}
-                    className="border border-gray-200 rounded-lg p-4"
+                    className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-mono text-blue-600 font-semibold">
-                        {subdomain.subdomainName}.is-an.ai
-                      </h3>
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-mono text-blue-600 font-semibold text-lg">
+                          {subdomain.subdomainName}.is-an.ai
+                        </h3>
+                        <button
+                          onClick={() =>
+                            handleCopySubdomain(subdomain.subdomainName)
+                          }
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          title="Copy subdomain"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                      <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium">
                         ACTIVE
                       </span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-2">
+                    <p className="text-gray-700 text-sm mb-3 leading-relaxed">
                       {subdomain.description}
                     </p>
-                    <div className="text-xs text-gray-500">
-                      <span className="font-mono">
-                        {subdomain.record.type}:{" "}
-                        {Array.isArray(subdomain.record.value)
-                          ? subdomain.record.value.join(", ")
-                          : String(subdomain.record.value)}
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                          {subdomain.record.type}:{" "}
+                          {Array.isArray(subdomain.record.value)
+                            ? subdomain.record.value.join(", ")
+                            : String(subdomain.record.value)}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Created{" "}
+                        {new Date(subdomain.createdAt).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -190,23 +266,26 @@ const DashboardPage = () => {
 
         {/* Create form modal placeholder */}
         {showCreateForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-semibold mb-4">Create Subdomain</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                This form will be implemented in the next step. For now, you can
-                use the homepage to check availability.
-              </p>
-              <button
-                onClick={() => setShowCreateForm(false)}
-                className="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+          <CreateSubdomainModal
+            isOpen={showCreateForm}
+            onClose={handleCloseModal}
+            onSubmit={createSubdomain}
+            onCheckAvailability={checkAvailability}
+            isLoading={isLoading}
+            isCheckingAvailability={isCheckingAvailability}
+            availabilityResult={availabilityResult}
+            error={error}
+          />
         )}
       </main>
+
+      {/* Toast Notifications */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 };
