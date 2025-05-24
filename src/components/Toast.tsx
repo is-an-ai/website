@@ -30,19 +30,19 @@ const Toast = ({
   const bgColor = {
     success: "bg-green-50 border-green-200",
     error: "bg-red-50 border-red-200",
-    info: "bg-purple-50 border-purple-200",
+    info: "bg-cyan-50 border-cyan-200",
   }[type];
 
   const textColor = {
     success: "text-green-800",
     error: "text-red-800",
-    info: "text-purple-800",
+    info: "text-cyan-800",
   }[type];
 
   const iconColor = {
     success: "text-green-500",
     error: "text-red-500",
-    info: "text-purple-500",
+    info: "text-cyan-500",
   }[type];
 
   return (

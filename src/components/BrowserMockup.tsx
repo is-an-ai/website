@@ -85,7 +85,7 @@ const BrowserMockup: React.FC<BrowserMockupProps> = ({ children }) => {
               <input
                 type="text"
                 placeholder="my-ai-project"
-                className="font-mono text-purple-600 bg-transparent outline-none border-none flex-1 text-sm"
+                className="font-mono text-cyan-600 bg-transparent outline-none border-none flex-1 text-sm"
               />
               <span className="text-gray-900 font-mono text-sm">.is-an.ai</span>
             </div>

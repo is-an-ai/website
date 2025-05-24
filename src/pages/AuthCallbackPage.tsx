@@ -40,7 +40,7 @@ const AuthCallbackPage = () => {
 
           <button
             onClick={() => (window.location.href = "/")}
-            className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+            className="w-full bg-cyan-600 text-white py-2 px-4 rounded-lg hover:bg-cyan-700 transition-colors"
           >
             Back to Home
           </button>

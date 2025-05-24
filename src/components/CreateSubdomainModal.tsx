@@ -162,7 +162,7 @@ const CreateSubdomainModal = ({
                   isCheckingAvailability ||
                   isLoading
                 }
-                className="px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap text-sm font-medium"
+                className="px-4 py-3 bg-cyan-600 text-white rounded-xl hover:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap text-sm font-medium"
               >
                 {isCheckingAvailability ? "Checking..." : "Check"}
               </button>
@@ -207,7 +207,7 @@ const CreateSubdomainModal = ({
               )}
 
             {formData.subdomainName.trim() && !hasCheckedAvailability && (
-              <p className="mt-2 text-amber-600 text-sm">
+              <p className="mt-2 text-cyan-600 text-sm">
                 Please check availability before proceeding
               </p>
             )}
@@ -320,7 +320,7 @@ const CreateSubdomainModal = ({
             <button
               type="submit"
               disabled={!isFormValid || isLoading}
-              className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+              className="flex-1 px-4 py-3 bg-cyan-600 text-white rounded-xl hover:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
