@@ -3,6 +3,7 @@ import { MainLayout } from "./components";
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import DocsPage from "./pages/DocsPage";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/docs" element={<DocsPage />} />
       </Routes>
     </MainLayout>
   );
