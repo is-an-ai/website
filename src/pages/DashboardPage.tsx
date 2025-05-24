@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubdomains } from "@/hooks/useSubdomains";
 
-const DashboardPage: React.FC = () => {
+const DashboardPage = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
   const { subdomains, isLoading, error, fetchMySubdomains, clearError } =

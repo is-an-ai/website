@@ -1,7 +1,6 @@
-import React from "react";
 import ExampleCard from "./ExampleCard";
 
-const ExamplesSection: React.FC = () => {
+const ExamplesSection = () => {
   const examples = [
     {
       subdomain: "chatbot.is-an.ai",

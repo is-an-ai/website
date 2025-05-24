@@ -100,7 +100,7 @@ class ApiClient {
   }
 
   private isPublicEndpoint(endpoint: string): boolean {
-    const publicEndpoints = ["/v1/dev/", "/v1/user/auth/github"];
+    const publicEndpoints = ["/v1/dev/"];
 
     return publicEndpoints.some((path) => endpoint.startsWith(path));
   }
@@ -109,16 +109,6 @@ class ApiClient {
   async devLogin(): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>("/v1/dev/login", {
       method: "POST",
-    });
-
-    this.saveToken(response.token);
-    return response;
-  }
-
-  async githubAuth(code: string, state?: string): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>("/v1/user/auth/github", {
-      method: "POST",
-      body: JSON.stringify({ code, state }),
     });
 
     this.saveToken(response.token);

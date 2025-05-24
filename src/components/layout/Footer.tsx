@@ -1,9 +1,7 @@
-import React from "react";
-
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
     <footer className="border-t border-gray-200 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div className="mb-4 md:mb-0">
             <h3 className="text-sm font-mono font-semibold text-gray-900 mb-2">

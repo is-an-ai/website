@@ -6,9 +6,7 @@ interface SubdomainCheckerProps {
   onAvailabilityCheck?: (subdomain: string, isAvailable: boolean) => void;
 }
 
-const SubdomainChecker: React.FC<SubdomainCheckerProps> = ({
-  onAvailabilityCheck,
-}) => {
+const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
   const [subdomainInput, setSubdomainInput] = useState("");
   const { isAuthenticated, login, devLogin } = useAuth();
   const {

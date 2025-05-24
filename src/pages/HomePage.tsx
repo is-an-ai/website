@@ -1,4 +1,3 @@
-import React from "react";
 import {
   HeroSection,
   HowItWorksSection,
@@ -6,7 +5,7 @@ import {
   CommunityCTASection,
 } from "@/components";
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   return (
     <div className="bg-white">
       <HeroSection />

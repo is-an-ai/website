@@ -1,7 +1,6 @@
-import React from "react";
 import StepCard from "./StepCard";
 
-const HowItWorksSection: React.FC = () => {
+const HowItWorksSection = () => {
   const steps = [
     {
       step: 1,

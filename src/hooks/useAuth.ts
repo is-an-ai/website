@@ -14,10 +14,7 @@ interface UseAuthReturn {
   clearError: () => void;
 }
 
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
-const GITHUB_REDIRECT_URI =
-  import.meta.env.VITE_GITHUB_REDIRECT_URI ||
-  `${window.location.origin}/auth/callback`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.is-an.ai";
 
 export const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
@@ -35,23 +32,9 @@ export const useAuth = (): UseAuthReturn => {
     setError(null);
   }, []);
 
-  // GitHub OAuth login
+  // GitHub OAuth login - simplified redirect to backend
   const login = useCallback(() => {
-    if (!GITHUB_CLIENT_ID) {
-      setError("GitHub OAuth is not configured");
-      return;
-    }
-
-    const state = Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("oauth_state", state);
-
-    const githubAuthUrl = new URL("https://github.com/login/oauth/authorize");
-    githubAuthUrl.searchParams.set("client_id", GITHUB_CLIENT_ID);
-    githubAuthUrl.searchParams.set("redirect_uri", GITHUB_REDIRECT_URI);
-    githubAuthUrl.searchParams.set("scope", "user:email");
-    githubAuthUrl.searchParams.set("state", state);
-
-    window.location.href = githubAuthUrl.toString();
+    window.location.href = `${API_BASE_URL}/v1/user/auth/github`;
   }, []);
 
   // Dev environment login
@@ -70,35 +53,34 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  // Handle GitHub OAuth callback
-  const handleGithubCallback = useCallback(
-    async (code: string, state: string) => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  // Handle OAuth callback with token and user info in URL params
+  const handleOAuthCallback = useCallback(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get("token");
+    const encodedUser = urlParams.get("user");
 
-        // Verify state parameter
-        const storedState = localStorage.getItem("oauth_state");
-        if (state !== storedState) {
-          throw new Error("Invalid state parameter");
-        }
+    if (!token || !encodedUser) {
+      setError("Invalid OAuth callback - missing token or user data");
+      setIsLoading(false);
+      return;
+    }
 
-        localStorage.removeItem("oauth_state");
+    try {
+      // Save token
+      localStorage.setItem("auth_token", token);
 
-        const response: AuthResponse = await apiClient.githubAuth(code, state);
-        setUser(response.user);
+      // Decode user info
+      const userInfo = JSON.parse(decodeURIComponent(encodedUser));
+      setUser(userInfo);
 
-        // Redirect to dashboard or home
-        window.location.href = "/dashboard";
-      } catch (err) {
-        const apiError = err as ApiError;
-        setError(apiError.message || "Authentication failed");
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+      // Clear URL params and redirect to dashboard
+      window.history.replaceState({}, document.title, "/dashboard");
+    } catch (err) {
+      setError("Failed to process OAuth callback");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [location.search]);
 
   // Check authentication status on mount
   useEffect(() => {
@@ -119,8 +101,14 @@ export const useAuth = (): UseAuthReturn => {
       }
     };
 
+    // Handle OAuth callback
+    if (location.pathname === "/auth/callback") {
+      handleOAuthCallback();
+      return;
+    }
+
     checkAuth();
-  }, []);
+  }, [location.pathname, handleOAuthCallback]);
 
   // Listen for token expiration events
   useEffect(() => {
@@ -135,23 +123,16 @@ export const useAuth = (): UseAuthReturn => {
     };
   }, []);
 
-  // Handle GitHub OAuth callback if we're on the callback page
+  // Handle OAuth errors
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
     const error = urlParams.get("error");
 
-    if (error) {
-      setError(`GitHub OAuth error: ${error}`);
+    if (error && location.pathname === "/auth/callback") {
+      setError(`OAuth error: ${error}`);
       setIsLoading(false);
-      return;
     }
-
-    if (code && state && location.pathname === "/auth/callback") {
-      handleGithubCallback(code, state);
-    }
-  }, [location.search, location.pathname, handleGithubCallback]);
+  }, [location.search, location.pathname]);
 
   return {
     user,
