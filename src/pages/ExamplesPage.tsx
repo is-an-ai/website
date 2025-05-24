@@ -207,7 +207,7 @@ const ExamplesPage = () => {
             <div className="text-sm text-gray-600 mt-1">Live & Running</div>
           </div>
           <div className="bg-white rounded-lg border p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600 font-mono">
+            <div className="text-3xl font-bold text-purple-600 font-mono">
               {new Set(projects.flatMap((p) => p.tags)).size}
             </div>
             <div className="text-sm text-gray-600 mt-1">AI Technologies</div>
@@ -236,7 +236,7 @@ const ExamplesPage = () => {
                     rel={project.isLive ? "noopener noreferrer" : ""}
                     className={`font-mono text-sm ${
                       project.isLive
-                        ? "text-blue-600 hover:text-blue-800 hover:underline"
+                        ? "text-purple-600 hover:text-purple-800 hover:underline"
                         : "text-gray-500 cursor-not-allowed"
                     }`}
                   >

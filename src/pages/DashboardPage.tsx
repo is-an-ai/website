@@ -73,7 +73,7 @@ const DashboardPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -161,7 +161,7 @@ const DashboardPage = () => {
               </h2>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                className="bg-purple-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors shadow-sm"
               >
                 Add Subdomain
               </button>
@@ -171,7 +171,7 @@ const DashboardPage = () => {
           <div className="px-6 py-4">
             {isLoading ? (
               <div className="text-center py-8">
-                <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <div className="w-6 h-6 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p className="text-gray-600">Loading subdomains...</p>
               </div>
             ) : subdomains.length === 0 ? (
@@ -197,7 +197,7 @@ const DashboardPage = () => {
                 </p>
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                  className="bg-purple-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors shadow-sm"
                 >
                   Create Subdomain
                 </button>
@@ -211,7 +211,7 @@ const DashboardPage = () => {
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-mono text-blue-600 font-semibold text-lg">
+                        <h3 className="font-mono text-purple-600 font-semibold text-lg">
                           {subdomain.subdomainName}.is-an.ai
                         </h3>
                         <button

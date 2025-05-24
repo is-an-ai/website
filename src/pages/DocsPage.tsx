@@ -19,13 +19,13 @@ const DocsPage = () => {
             Quick Start Guide
           </h2>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="font-semibold text-blue-900 mb-3">
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+            <h3 className="font-semibold text-purple-900 mb-3">
               What you'll get:
             </h3>
-            <p className="text-blue-800">
+            <p className="text-purple-800">
               A subdomain like{" "}
-              <code className="bg-blue-100 px-2 py-1 rounded text-sm">
+              <code className="bg-purple-100 px-2 py-1 rounded text-sm">
                 your-project.is-an.ai
               </code>{" "}
               pointing to your AI project

@@ -10,7 +10,7 @@ const HeroSection = () => {
               Free • Open Source • Community Driven
             </span>
             <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-6 font-mono">
-              <span className="text-blue-600">your-project</span>.is-an.ai
+              <span className="text-purple-600">your-project</span>.is-an.ai
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
               Free subdomains for AI projects. No GitHub PRs, no DNS config, no

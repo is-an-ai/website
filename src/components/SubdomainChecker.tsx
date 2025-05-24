@@ -121,8 +121,8 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
     if (isAuthenticated) return null;
 
     return (
-      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <p className="text-sm text-blue-800 mb-3 text-center">
+      <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+        <p className="text-sm text-purple-800 mb-3 text-center">
           Sign in to register your subdomain
         </p>
         <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -233,7 +233,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 placeholder="my-ai-project"
-                className="font-mono text-blue-600 bg-transparent outline-none border-none flex-1 text-sm"
+                className="font-mono text-purple-600 bg-transparent outline-none border-none flex-1 text-sm"
                 disabled={isCheckingAvailability}
               />
               <span className="text-gray-900 font-mono text-sm">.is-an.ai</span>
@@ -244,10 +244,10 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
         {/* Browser Content Area */}
         <div className="bg-white p-8">
           <div className="text-center">
-            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-6">
               {isCheckingAvailability ? (
                 <svg
-                  className="w-10 h-10 text-blue-500 animate-spin"
+                  className="w-10 h-10 text-purple-500 animate-spin"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -267,7 +267,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
                 </svg>
               ) : (
                 <svg
-                  className="w-10 h-10 text-blue-500"
+                  className="w-10 h-10 text-purple-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -298,7 +298,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
               <button
                 onClick={handleCheckAvailability}
                 disabled={!subdomainInput.trim() || isCheckingAvailability}
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-6 py-3 bg-purple-600 text-white font-medium text-sm rounded-lg hover:bg-purple-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCheckingAvailability ? (
                   <>
