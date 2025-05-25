@@ -31,13 +31,6 @@ class ApiClient {
     }
   }
 
-  private saveToken(token: string) {
-    this.token = token;
-    if (typeof window !== "undefined") {
-      localStorage.setItem(AUTH_TOKEN_KEY, token);
-    }
-  }
-
   private clearToken() {
     this.token = null;
     if (typeof window !== "undefined") {

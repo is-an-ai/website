@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { User, AuthResponse, ApiError } from "@/types/api";
+import { User } from "@/types/api";
 import apiClient from "@/lib/api";
 import {
   API_BASE_URL,
@@ -15,7 +15,6 @@ interface UseAuthReturn {
   isLoading: boolean;
   error: string | null;
   login: () => void;
-  devLogin: () => Promise<void>;
   logout: () => void;
   clearError: () => void;
 }
@@ -40,21 +39,6 @@ export const useAuth = (): UseAuthReturn => {
     window.location.href = `${API_BASE_URL}${API_ENDPOINTS.GITHUB_AUTH}`;
   }, []);
 
-  const devLogin = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response: AuthResponse = await apiClient.devLogin();
-      setUser(response.user);
-    } catch (err) {
-      const apiError = err as ApiError;
-      setError(apiError.message || "Login failed");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   const handleOAuthCallback = useCallback(() => {
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get("token");
@@ -74,7 +58,7 @@ export const useAuth = (): UseAuthReturn => {
 
       window.history.replaceState({}, document.title, ROUTES.DASHBOARD);
     } catch (err) {
-      setError("Failed to process OAuth callback");
+      setError(`Failed to process OAuth callback: ${err}`);
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +114,6 @@ export const useAuth = (): UseAuthReturn => {
     isLoading,
     error,
     login,
-    devLogin,
     logout,
     clearError,
   };
