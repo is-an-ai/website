@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import SubdomainChecker from "./SubdomainChecker";
+import TypingAnimation from "./TypingAnimation";
 
 const HeroSection = () => {
   return (
@@ -11,7 +12,25 @@ const HeroSection = () => {
               Free • Open Source • Community Driven
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 font-mono leading-tight">
-              <span className="text-cyan-600">your-project</span>.is-an.ai
+              <span className="text-cyan-600 bg-gray-100 rounded-md px-2 py-1">
+                <TypingAnimation
+                  words={[
+                    "jarvis",
+                    "friday",
+                    "cortana",
+                    "hal-9000",
+                    "skynet",
+                    "ava",
+                    "samantha",
+                    "wall-e",
+                    "data",
+                    "glados",
+                    "karen",
+                    "viki",
+                  ]}
+                />
+              </span>
+              .is-an.ai
             </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto px-4 sm:px-0">
               Free subdomains for AI projects. No GitHub PRs, no DNS config, no
