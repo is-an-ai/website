@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# is-an.ai
 
-## Getting Started
+Free subdomains for AI projects. No GitHub PRs, no DNS config, no waiting.
 
-First, run the development server:
+## What is is-an.ai?
+
+**is-an.ai** is like [is-a.dev](https://is-a.dev) but specifically designed for AI projects and enthusiasts. We provide free subdomains under the `is-an.ai` domain (e.g., `your-project.is-an.ai`) with a simple, modern user experience inspired by Toss.
+
+### Key Features
+
+- 🚀 **Instant Registration** - Get your subdomain in seconds
+- 🔐 **GitHub OAuth** - Simple authentication, no account creation needed
+- 🎯 **AI-Focused** - Perfect for AI researchers, developers, and enthusiasts
+- 🆓 **Completely Free** - No hidden costs or limitations
+- 🌐 **No Technical Knowledge Required** - No DNS configuration or GitHub skills needed
+
+## Quick Start
+
+### Method 1: Web Interface (Recommended)
+
+1. **Visit** [is-an.ai](https://is-an.ai)
+2. **Check availability** of your desired subdomain
+3. **Sign in** with GitHub OAuth
+4. **Register** your subdomain instantly
+5. **Configure** your target URL in the dashboard
+
+That's it! Your subdomain will be active immediately.
+
+### Method 2: GitHub Repository (Advanced)
+
+If you prefer the traditional approach or want to contribute to the community:
+
+1. **Fork** the [is-an.ai repository](https://github.com/is-an-ai/is-an.ai)
+2. **Add** your DNS record to the appropriate JSON file following the schema
+3. **Submit** a pull request
+4. **Wait** for automatic processing via GitHub Actions
+
+## How It Works
+
+is-an.ai manages DNS records through a public GitHub repository. When you register a subdomain through our website:
+
+1. Your request is processed by our backend API
+2. DNS records are automatically added to our repository
+3. GitHub Actions deploy the changes to Cloudflare
+4. Your subdomain becomes active within minutes
+
+## Use Cases
+
+Perfect for:
+
+- 🤖 **AI/ML Projects** - Showcase your models and demos
+- 🔬 **Research Projects** - Share your AI research and papers
+- 🛠️ **AI Tools** - Deploy your AI-powered applications
+- 📚 **Educational Content** - AI tutorials and learning resources
+- 🎮 **AI Games** - Interactive AI experiences
+- 💼 **Portfolio Sites** - Highlight your AI work
+
+## Development
+
+This is a React + Vite application. See [SETUP.md](./SETUP.md) for detailed development instructions.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-bun dev
+
+# Build for production
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+We welcome contributions! Whether it's:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🐛 Bug reports and fixes
+- ✨ Feature suggestions and implementations
+- 📖 Documentation improvements
+- 🎨 UI/UX enhancements
 
-## Learn More
+Please check our [GitHub repository](https://github.com/is-an-ai/is-an.ai-website) for contribution guidelines.
 
-To learn more about Next.js, take a look at the following resources:
+## Support
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 📧 **Email**: support@is-an.ai
+- 💬 **GitHub Issues**: [Report bugs or request features](https://github.com/is-an-ai/is-an.ai-website/issues)
+- 🌟 **Star us** on GitHub if you find this useful!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Made with ❤️ for the AI community**

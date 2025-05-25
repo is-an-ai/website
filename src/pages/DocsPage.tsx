@@ -28,7 +28,7 @@ const DocsPage = () => {
               <code className="bg-cyan-100 px-2 py-1 rounded text-sm">
                 your-project.is-an.ai
               </code>{" "}
-              pointing to your AI project
+              pointing to your AI project - <strong>instantly!</strong>
             </p>
           </div>
 
@@ -53,10 +53,10 @@ const DocsPage = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900">
-                  Connect your GitHub
+                  Sign in with GitHub
                 </h4>
                 <p className="text-gray-600 text-sm mt-1">
-                  We'll automatically create a pull request for you
+                  Simple one-click authentication - no account creation needed
                 </p>
               </div>
             </div>
@@ -67,74 +67,182 @@ const DocsPage = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900">
-                  Wait for approval
+                  Register instantly
                 </h4>
                 <p className="text-gray-600 text-sm mt-1">
-                  Usually takes 24-48 hours for review and activation
+                  Your subdomain is active immediately - no waiting required!
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="bg-gray-50 border rounded-lg p-6 mt-6">
+            <h3 className="font-semibold text-gray-900 mb-3">
+              Alternative: GitHub Repository Method
+            </h3>
+            <p className="text-gray-600 text-sm mb-3">
+              For advanced users who prefer the traditional approach:
+            </p>
+            <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
+              <li>Fork the is-an.ai repository</li>
+              <li>Add your DNS record following the JSON schema</li>
+              <li>Submit a pull request</li>
+              <li>Automatic processing via GitHub Actions</li>
+            </ol>
           </div>
         </div>
       ),
     },
     {
       id: "examples",
-      title: "Examples",
+      title: "Platform Integration",
       content: (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">
-            Good Subdomain Examples
+            Deploy with Popular Platforms
           </h2>
 
-          <div className="grid gap-4">
-            <div className="border rounded-lg p-4 bg-green-50 border-green-200">
-              <div className="flex items-center justify-between">
-                <code className="font-mono text-lg">smart-chat.is-an.ai</code>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                  ✓ Good
-                </span>
+          <div className="space-y-6">
+            {/* Vercel */}
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-black rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">▲</span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Vercel</h3>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Descriptive, clear purpose, uses hyphens
-              </p>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    1. Deploy your project to Vercel
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Your app URL: https://my-project.vercel.app
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    2. Register subdomain on is-an.ai
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Subdomain: my-project.is-an.ai →
+                    https://my-project.vercel.app
+                  </code>
+                </div>
+                <p className="text-xs text-gray-500">
+                  ✨ Works instantly with any Vercel deployment
+                </p>
+              </div>
             </div>
 
-            <div className="border rounded-lg p-4 bg-green-50 border-green-200">
-              <div className="flex items-center justify-between">
-                <code className="font-mono text-lg">neural-art.is-an.ai</code>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                  ✓ Good
-                </span>
+            {/* Cloudflare Pages */}
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">☁</span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Cloudflare Pages
+                </h3>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                AI domain specific, memorable
-              </p>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    1. Deploy to Cloudflare Pages
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Your app URL: https://my-project.pages.dev
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    2. Point your is-an.ai subdomain
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Subdomain: my-project.is-an.ai →
+                    https://my-project.pages.dev
+                  </code>
+                </div>
+                <p className="text-xs text-gray-500">
+                  🚀 Perfect for static sites and SPAs
+                </p>
+              </div>
             </div>
 
-            <div className="border rounded-lg p-4 bg-red-50 border-red-200">
-              <div className="flex items-center justify-between">
-                <code className="font-mono text-lg">test123.is-an.ai</code>
-                <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
-                  ✗ Avoid
-                </span>
+            {/* GitHub Pages */}
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-gray-900 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">⚡</span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  GitHub Pages
+                </h3>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Generic, not descriptive, includes numbers
-              </p>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    1. Enable GitHub Pages in your repo
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Your app URL: https://username.github.io/repo-name
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    2. Create your is-an.ai subdomain
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Subdomain: my-project.is-an.ai →
+                    https://username.github.io/repo-name
+                  </code>
+                </div>
+                <p className="text-xs text-gray-500">
+                  📚 Great for documentation and project showcases
+                </p>
+              </div>
+            </div>
+
+            {/* Netlify */}
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-teal-500 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">N</span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">Netlify</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    1. Deploy your site to Netlify
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Your app URL: https://amazing-site-123.netlify.app
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    2. Set up your custom subdomain
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Subdomain: my-project.is-an.ai →
+                    https://amazing-site-123.netlify.app
+                  </code>
+                </div>
+                <p className="text-xs text-gray-500">
+                  ⚡ Excellent for JAMstack applications
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 border rounded-lg p-6">
-            <h3 className="font-semibold text-gray-900 mb-3">
-              Naming Guidelines:
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>• Use lowercase letters and hyphens only</li>
-              <li>• Make it descriptive of your AI project</li>
-              <li>• Keep it under 20 characters</li>
-              <li>• Avoid numbers unless they're meaningful</li>
-              <li>• Check availability on the registration page</li>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="font-semibold text-blue-900 mb-3">💡 Pro Tips:</h3>
+            <ul className="space-y-2 text-sm text-blue-800">
+              <li>• Make sure your target URL is publicly accessible</li>
+              <li>• HTTPS URLs are recommended for security</li>
+              <li>• You can update the target URL anytime in your dashboard</li>
+              <li>• DNS changes take 5-10 minutes to propagate</li>
             </ul>
           </div>
         </div>
@@ -150,13 +258,14 @@ const DocsPage = () => {
           <div className="space-y-4">
             <details className="border rounded-lg">
               <summary className="p-4 cursor-pointer font-semibold text-gray-900 hover:bg-gray-50">
-                My subdomain isn't working after approval
+                My subdomain isn't working after registration
               </summary>
               <div className="p-4 pt-0 text-gray-600 text-sm">
                 <p className="mb-2">
-                  DNS propagation can take up to 24 hours. Try:
+                  DNS propagation can take a few minutes. Try:
                 </p>
                 <ul className="list-disc list-inside space-y-1">
+                  <li>Wait 5-10 minutes for DNS propagation</li>
                   <li>Clear your browser cache</li>
                   <li>Try accessing from a different device</li>
                   <li>Check DNS propagation with online tools</li>
@@ -166,15 +275,15 @@ const DocsPage = () => {
 
             <details className="border rounded-lg">
               <summary className="p-4 cursor-pointer font-semibold text-gray-900 hover:bg-gray-50">
-                Pull request was rejected
+                Subdomain registration failed
               </summary>
               <div className="p-4 pt-0 text-gray-600 text-sm">
-                <p className="mb-2">Common rejection reasons:</p>
+                <p className="mb-2">Common reasons for failure:</p>
                 <ul className="list-disc list-inside space-y-1">
                   <li>Subdomain already taken</li>
-                  <li>Inappropriate naming</li>
+                  <li>Invalid subdomain format</li>
                   <li>Target URL not responding</li>
-                  <li>Not an AI-related project</li>
+                  <li>Rate limiting (try again in a few minutes)</li>
                 </ul>
               </div>
             </details>
@@ -189,6 +298,22 @@ const DocsPage = () => {
                   <li>Make sure you have a public GitHub profile</li>
                   <li>Disable browser extensions that block popups</li>
                   <li>Clear cookies and try again</li>
+                  <li>Check if GitHub is experiencing issues</li>
+                </ul>
+              </div>
+            </details>
+
+            <details className="border rounded-lg">
+              <summary className="p-4 cursor-pointer font-semibold text-gray-900 hover:bg-gray-50">
+                Can't access my dashboard
+              </summary>
+              <div className="p-4 pt-0 text-gray-600 text-sm">
+                <p className="mb-2">Dashboard access issues:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Make sure you're signed in with GitHub</li>
+                  <li>Clear browser cache and cookies</li>
+                  <li>Try signing out and back in</li>
+                  <li>Check if you have any registered subdomains</li>
                 </ul>
               </div>
             </details>
@@ -211,7 +336,18 @@ const DocsPage = () => {
                 Is this service free?
               </h3>
               <p className="text-gray-600 text-sm">
-                Yes, completely free for AI researchers and enthusiasts.
+                Yes, completely free for everyone. No hidden costs or
+                limitations for basic subdomain registration.
+              </p>
+            </div>
+
+            <div className="border-b pb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                How fast is the registration process?
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Instant! Your subdomain is active immediately after
+                registration. DNS propagation takes 5-10 minutes.
               </p>
             </div>
 
@@ -220,7 +356,9 @@ const DocsPage = () => {
                 Can I change my subdomain later?
               </h3>
               <p className="text-gray-600 text-sm">
-                No, subdomains are permanent. Choose carefully.
+                You can update DNS records (target URL) anytime through your
+                dashboard. To change the subdomain name itself, delete the
+                current one and create a new one.
               </p>
             </div>
 
@@ -229,8 +367,8 @@ const DocsPage = () => {
                 What kind of projects are allowed?
               </h3>
               <p className="text-gray-600 text-sm">
-                Any AI, ML, or data science related projects. No commercial
-                restrictions.
+                Any projects are welcome! While we focus on AI, you don't need
+                to have an AI-related project to use our service.
               </p>
             </div>
 
@@ -239,16 +377,37 @@ const DocsPage = () => {
                 Can I point to localhost?
               </h3>
               <p className="text-gray-600 text-sm">
-                No, only publicly accessible URLs are allowed.
+                No, only publicly accessible URLs are allowed. Your target must
+                be reachable from the internet.
               </p>
             </div>
 
             <div className="border-b pb-4">
               <h3 className="font-semibold text-gray-900 mb-2">
-                How long does approval take?
+                How many subdomains can I register?
               </h3>
               <p className="text-gray-600 text-sm">
-                Usually 24-48 hours. Complex cases may take longer.
+                There's no strict limit, but please be reasonable.
+              </p>
+            </div>
+
+            <div className="border-b pb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                What happens if my target URL goes down?
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Your subdomain will continue to point to the URL you specified.
+                Update it in your dashboard when your service is back up.
+              </p>
+            </div>
+
+            <div className="border-b pb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Can I delete my subdomain?
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Yes, you can delete your subdomains anytime through your
+                dashboard. This action is permanent.
               </p>
             </div>
           </div>

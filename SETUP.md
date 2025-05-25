@@ -11,6 +11,28 @@ This is a **React + Vite** application with TypeScript, providing a fast and lig
 - Simpler deployment (static files)
 - Perfect for client-side only applications
 
+## User Registration Flow
+
+### Quick Start (Recommended)
+
+Users can register subdomains instantly through our web interface:
+
+1. **Visit the website** - No technical knowledge required
+2. **GitHub OAuth** - Simple one-click authentication
+3. **Instant registration** - Subdomains are active immediately
+4. **Dashboard management** - Easy subdomain configuration
+
+**No GitHub PRs, no review process, no waiting.**
+
+### Alternative: GitHub Repository Method
+
+For advanced users who prefer the traditional approach:
+
+1. **Fork** the [is-an.ai repository](https://github.com/is-an-ai/is-an.ai)
+2. **Add DNS records** following the JSON schema
+3. **Submit pull request** - Automatically processed via GitHub Actions
+4. **DNS deployment** - Changes propagated to Cloudflare
+
 ## Environment Variables
 
 Create a `.env.local` file in the root directory with the following variables:
@@ -75,6 +97,7 @@ Built files will be in the `dist` directory.
 - ✅ Real-time availability checking
 - ✅ Subdomain validation
 - ✅ User dashboard with subdomain listing
+- ✅ Instant subdomain registration
 - ✅ Error handling and user feedback
 
 ### Authentication Flow
@@ -95,7 +118,7 @@ Built files will be in the `dist` directory.
 
 - `GET /v1/domain/my` - Get user's subdomains
 - `GET /v1/domain/name/:name` - Check subdomain availability
-- `POST /v1/domain` - Create new subdomain
+- `POST /v1/domain` - Create new subdomain (instant registration)
 - `PUT /v1/domain/:name` - Update subdomain
 - `DELETE /v1/domain/:name` - Delete subdomain
 
@@ -114,7 +137,7 @@ Built files will be in the `dist` directory.
 
 ### Components
 
-- `SubdomainChecker` - Interactive availability checker
+- `SubdomainChecker` - Interactive availability checker with instant registration
 - `BrowserMockup` - Reusable browser interface
 - Dashboard components for subdomain management
 
@@ -132,6 +155,7 @@ Built files will be in the `dist` directory.
 - The dev login endpoint (`/v1/dev/login`) works without authentication
 - All API errors are properly handled and displayed to users
 - Hot reload works perfectly with Vite
+- Test subdomain registration flow without affecting production
 
 ### For Production
 
@@ -139,6 +163,17 @@ Built files will be in the `dist` directory.
 - Set correct redirect URI for your domain
 - Update API base URL to production endpoint
 - Deploy static files from `dist` directory
+
+## How Backend Integration Works
+
+The frontend communicates with our backend API which handles:
+
+1. **GitHub OAuth** - User authentication
+2. **DNS Management** - Automatic record creation in GitHub repository
+3. **Cloudflare Integration** - DNS propagation via GitHub Actions
+4. **Validation** - Subdomain name and target URL validation
+
+**No manual GitHub work required for users** - everything is automated through our API.
 
 ## Deployment
 

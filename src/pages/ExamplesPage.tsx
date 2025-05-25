@@ -1,140 +1,37 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import { useAllSubdomains } from "@/hooks/useAllSubdomains";
+import { Subdomain } from "@/types/api";
+import { DOMAIN_SUFFIX } from "@/lib/constants";
 
 interface Project {
   id: string;
   name: string;
   subdomain: string;
   description: string;
-  category: string;
-  tags: string[];
   isLive: boolean;
 }
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-}
+// Helper function to transform Subdomain to Project
+const transformSubdomainToProject = (subdomain: Subdomain): Project => {
+  return {
+    id: subdomain.subdomainId,
+    name: subdomain.subdomainName
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" "), // Convert kebab-case to Title Case
+    subdomain: `${subdomain.subdomainName}${DOMAIN_SUFFIX}`,
+    description: subdomain.description,
+    isLive: true, // Assume all registered subdomains are live
+  };
+};
 
 const ExamplesPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const { subdomains, isLoading, error, refetch } = useAllSubdomains();
 
-  const categories: Category[] = [
-    {
-      id: "all",
-      name: "All Projects",
-      description: "View all AI projects using is-an.ai",
-    },
-    {
-      id: "demos",
-      name: "AI Demos",
-      description: "Interactive AI demonstrations",
-    },
-    {
-      id: "research",
-      name: "Research Tools",
-      description: "Academic and research projects",
-    },
-    {
-      id: "models",
-      name: "Model APIs",
-      description: "AI model inference endpoints",
-    },
-    {
-      id: "datasets",
-      name: "Data Tools",
-      description: "Dataset exploration and tools",
-    },
-  ];
-
-  // Mock data - in real app this would come from API
-  const projects: Project[] = [
-    {
-      id: "1",
-      name: "Neural Style Transfer",
-      subdomain: "neural-art.is-an.ai",
-      description:
-        "Transform your photos using AI-powered artistic style transfer with various painting styles.",
-      category: "demos",
-      tags: ["Computer Vision", "Art", "PyTorch"],
-      isLive: true,
-    },
-    {
-      id: "2",
-      name: "Smart Chat Assistant",
-      subdomain: "smart-chat.is-an.ai",
-      description:
-        "Conversational AI assistant powered by fine-tuned language models for domain-specific queries.",
-      category: "demos",
-      tags: ["NLP", "Chatbot", "Transformers"],
-      isLive: true,
-    },
-    {
-      id: "3",
-      name: "Research Paper Explorer",
-      subdomain: "paper-explorer.is-an.ai",
-      description:
-        "Search and analyze machine learning research papers with semantic similarity and citation graphs.",
-      category: "research",
-      tags: ["NLP", "Research", "Knowledge Graph"],
-      isLive: true,
-    },
-    {
-      id: "4",
-      name: "Sentiment Analysis API",
-      subdomain: "sentiment-api.is-an.ai",
-      description:
-        "High-performance sentiment analysis for social media text with multi-language support.",
-      category: "models",
-      tags: ["NLP", "API", "Sentiment"],
-      isLive: true,
-    },
-    {
-      id: "5",
-      name: "Medical Image Classifier",
-      subdomain: "med-vision.is-an.ai",
-      description:
-        "AI-powered medical image analysis for early disease detection and diagnosis assistance.",
-      category: "research",
-      tags: ["Computer Vision", "Healthcare", "CNN"],
-      isLive: false,
-    },
-    {
-      id: "6",
-      name: "Dataset Visualizer",
-      subdomain: "data-viz.is-an.ai",
-      description:
-        "Interactive visualization tool for exploring high-dimensional datasets with dimensionality reduction.",
-      category: "datasets",
-      tags: ["Data Science", "Visualization", "t-SNE"],
-      isLive: true,
-    },
-    {
-      id: "7",
-      name: "Code Generation Assistant",
-      subdomain: "code-gen.is-an.ai",
-      description:
-        "AI-powered code completion and generation for Python, JavaScript, and machine learning frameworks.",
-      category: "demos",
-      tags: ["Code Generation", "Programming", "GPT"],
-      isLive: true,
-    },
-    {
-      id: "8",
-      name: "Speech Recognition Demo",
-      subdomain: "speech-to-text.is-an.ai",
-      description:
-        "Real-time speech recognition with custom vocabulary and noise reduction capabilities.",
-      category: "demos",
-      tags: ["Speech", "Audio", "Whisper"],
-      isLive: true,
-    },
-  ];
-
-  const filteredProjects =
-    activeCategory === "all"
-      ? projects
-      : projects.filter((project) => project.category === activeCategory);
+  // Transform subdomains to projects
+  const projects: Project[] = useMemo(() => {
+    return subdomains.map(transformSubdomainToProject);
+  }, [subdomains]);
 
   const getStatusBadge = (isLive: boolean) => {
     return isLive ? (
@@ -149,6 +46,40 @@ const ExamplesPage = () => {
       </span>
     );
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-12 h-12 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Failed to load projects
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={refetch}
+            className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -165,121 +96,91 @@ const ExamplesPage = () => {
           </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`px-4 py-2 rounded-lg font-mono text-sm transition-colors ${
-                  activeCategory === category.id
-                    ? "bg-gray-900 text-white"
-                    : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 border"
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
+        {/* Loading State */}
+        {isLoading && (
+          <div className="text-center py-12">
+            <div className="w-8 h-8 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading projects...</p>
           </div>
-
-          {activeCategory !== "all" && (
-            <div className="text-center mt-4">
-              <p className="text-gray-600 text-sm">
-                {categories.find((c) => c.id === activeCategory)?.description}
-              </p>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white rounded-lg border p-6 text-center">
-            <div className="text-3xl font-bold text-gray-900 font-mono">
-              {projects.length}
+        {!isLoading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+            <div className="bg-white rounded-lg border p-6 text-center">
+              <div className="text-3xl font-bold text-gray-900 font-mono">
+                {projects.length}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">Total Projects</div>
             </div>
-            <div className="text-sm text-gray-600 mt-1">Total Projects</div>
-          </div>
-          <div className="bg-white rounded-lg border p-6 text-center">
-            <div className="text-3xl font-bold text-green-600 font-mono">
-              {projects.filter((p) => p.isLive).length}
+            <div className="bg-white rounded-lg border p-6 text-center">
+              <div className="text-3xl font-bold text-green-600 font-mono">
+                {projects.filter((p) => p.isLive).length}
+              </div>
+              <div className="text-sm text-gray-600 mt-1">Live & Running</div>
             </div>
-            <div className="text-sm text-gray-600 mt-1">Live & Running</div>
           </div>
-          <div className="bg-white rounded-lg border p-6 text-center">
-            <div className="text-3xl font-bold text-cyan-600 font-mono">
-              {new Set(projects.flatMap((p) => p.tags)).size}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">AI Technologies</div>
-          </div>
-        </div>
+        )}
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-white rounded-lg border hover:shadow-md transition-shadow"
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {project.name}
-                  </h3>
-                  {getStatusBadge(project.isLive)}
-                </div>
+        {!isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-white rounded-lg border hover:shadow-md transition-shadow"
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {project.name}
+                    </h3>
+                    {getStatusBadge(project.isLive)}
+                  </div>
 
-                <div className="mb-3">
-                  <a
-                    href={project.isLive ? `https://${project.subdomain}` : "#"}
-                    target={project.isLive ? "_blank" : "_self"}
-                    rel={project.isLive ? "noopener noreferrer" : ""}
-                    className={`font-mono text-sm ${
-                      project.isLive
-                        ? "text-cyan-600 hover:text-cyan-800 hover:underline"
-                        : "text-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    {project.subdomain}
-                    {project.isLive && (
-                      <svg
-                        className="inline w-3 h-3 ml-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                        <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
-                      </svg>
-                    )}
-                  </a>
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-1">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700"
+                  <div className="mb-3">
+                    <a
+                      href={
+                        project.isLive ? `https://${project.subdomain}` : "#"
+                      }
+                      target={project.isLive ? "_blank" : "_self"}
+                      rel={project.isLive ? "noopener noreferrer" : ""}
+                      className={`font-mono text-sm ${
+                        project.isLive
+                          ? "text-cyan-600 hover:text-cyan-800 hover:underline"
+                          : "text-gray-500 cursor-not-allowed"
+                      }`}
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      {project.subdomain}
+                      {project.isLive && (
+                        <svg
+                          className="inline w-3 h-3 ml-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                          <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+                        </svg>
+                      )}
+                    </a>
+                  </div>
+
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {project.description}
+                  </p>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {filteredProjects.length === 0 && (
+        {!isLoading && projects.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-500 text-lg font-mono">
-              No projects found in this category
+              No projects found
             </div>
             <p className="text-gray-400 text-sm mt-2">
-              Try selecting a different category above
+              Be the first to register a subdomain!
             </p>
           </div>
         )}

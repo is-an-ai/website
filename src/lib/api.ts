@@ -1,5 +1,4 @@
 import {
-  AuthResponse,
   Subdomain,
   CreateSubdomainRequest,
   UpdateSubdomainRequest,
@@ -111,16 +110,6 @@ class ApiClient {
 
   private isPublicEndpoint(endpoint: string): boolean {
     return PUBLIC_ENDPOINTS.some((path) => endpoint.startsWith(path));
-  }
-
-  // Auth methods
-  async devLogin(): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>(API_ENDPOINTS.DEV_LOGIN, {
-      method: "POST",
-    });
-
-    this.saveToken(response.token);
-    return response;
   }
 
   logout() {

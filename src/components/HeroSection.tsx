@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import SubdomainChecker from "./SubdomainChecker";
 import TypingAnimation from "./TypingAnimation";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="py-12 sm:py-16 lg:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,12 +48,14 @@ const HeroSection = () => {
           <SubdomainChecker />
 
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
-            <Link
-              to="/dashboard"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 transition-colors font-mono"
-            >
-              Go to Dashboard
-            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 transition-colors font-mono"
+              >
+                Go to Dashboard
+              </Link>
+            )}
             <span className="text-sm text-gray-500 font-mono text-center">
               Manage your subdomains
             </span>
