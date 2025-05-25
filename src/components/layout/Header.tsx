@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { GITHUB_REPOSITORY_URL } from "@/lib/constants";
 
 const Header = () => {
   return (
@@ -15,6 +16,12 @@ const Header = () => {
           </div>
           <nav className="flex items-center space-x-6 text-sm">
             <Link
+              to="/dashboard"
+              className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
+            >
+              dashboard
+            </Link>
+            <Link
               to="/docs"
               className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
             >
@@ -27,7 +34,9 @@ const Header = () => {
               examples
             </Link>
             <a
-              href="https://github.com/is-an-ai"
+              href={GITHUB_REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center text-gray-600 hover:text-gray-900 transition-colors font-mono"
             >
               <svg

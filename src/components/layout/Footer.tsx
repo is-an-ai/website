@@ -1,3 +1,5 @@
+import { GITHUB_REPOSITORY_URL, DOMAIN_SUFFIX } from "@/lib/constants";
+
 const Footer = () => {
   return (
     <footer className="border-t border-gray-200 bg-white">
@@ -8,8 +10,13 @@ const Footer = () => {
               is-an.ai
             </h3>
             <p className="text-xs text-gray-600 max-w-md font-mono">
-              Free .is-an.ai subdomains for AI projects.{" "}
-              <a href="#" className="underline hover:no-underline">
+              Free {DOMAIN_SUFFIX} subdomains for AI projects.{" "}
+              <a
+                href={GITHUB_REPOSITORY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:no-underline"
+              >
                 Contribute on GitHub
               </a>
             </p>

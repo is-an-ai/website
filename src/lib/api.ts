@@ -7,8 +7,15 @@ import {
   DeleteResponse,
   ApiError,
 } from "@/types/api";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.is-an.ai";
+import {
+  API_BASE_URL,
+  AUTH_TOKEN_KEY,
+  API_ENDPOINTS,
+  PUBLIC_ENDPOINTS,
+  ERROR_CODES,
+  CUSTOM_EVENTS,
+  HTTP_STATUS,
+} from "./constants";
 
 class ApiClient {
   private baseUrl: string;
@@ -21,21 +28,21 @@ class ApiClient {
 
   private loadToken() {
     if (typeof window !== "undefined") {
-      this.token = localStorage.getItem("auth_token");
+      this.token = localStorage.getItem(AUTH_TOKEN_KEY);
     }
   }
 
   private saveToken(token: string) {
     this.token = token;
     if (typeof window !== "undefined") {
-      localStorage.setItem("auth_token", token);
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
     }
   }
 
   private clearToken() {
     this.token = null;
     if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_token");
+      localStorage.removeItem(AUTH_TOKEN_KEY);
     }
   }
 
@@ -71,11 +78,14 @@ class ApiClient {
         }));
 
         // Handle token expiration
-        if (errorData.code === 40003 || errorData.code === 40004) {
+        if (
+          errorData.code === ERROR_CODES.TOKEN_EXPIRED ||
+          errorData.code === ERROR_CODES.INVALID_TOKEN
+        ) {
           this.clearToken();
           // Optionally redirect to login or emit an event
           if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("auth:token-expired"));
+            window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.TOKEN_EXPIRED));
           }
         }
 
@@ -100,14 +110,12 @@ class ApiClient {
   }
 
   private isPublicEndpoint(endpoint: string): boolean {
-    const publicEndpoints = ["/v1/dev/"];
-
-    return publicEndpoints.some((path) => endpoint.startsWith(path));
+    return PUBLIC_ENDPOINTS.some((path) => endpoint.startsWith(path));
   }
 
   // Auth methods
   async devLogin(): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>("/v1/dev/login", {
+    const response = await this.request<AuthResponse>(API_ENDPOINTS.DEV_LOGIN, {
       method: "POST",
     });
 
@@ -125,19 +133,19 @@ class ApiClient {
 
   // Domain methods
   async getAllSubdomains(): Promise<Subdomain[]> {
-    return this.request<Subdomain[]>("/v1/domain");
+    return this.request<Subdomain[]>(API_ENDPOINTS.DOMAINS);
   }
 
   async getMySubdomains(): Promise<Subdomain[]> {
-    return this.request<Subdomain[]>("/v1/domain/my");
+    return this.request<Subdomain[]>(API_ENDPOINTS.MY_DOMAINS);
   }
 
   async getSubdomainById(id: string): Promise<Subdomain> {
-    return this.request<Subdomain>(`/v1/domain/id/${id}`);
+    return this.request<Subdomain>(API_ENDPOINTS.DOMAIN_BY_ID(id));
   }
 
   async getSubdomainByName(name: string): Promise<Subdomain> {
-    return this.request<Subdomain>(`/v1/domain/name/${name}`);
+    return this.request<Subdomain>(API_ENDPOINTS.DOMAIN_BY_NAME(name));
   }
 
   async checkSubdomainAvailability(name: string): Promise<boolean> {
@@ -146,7 +154,7 @@ class ApiClient {
       return false; // If we get a response, subdomain exists
     } catch (error) {
       const apiError = error as ApiError;
-      if (apiError.code === 404) {
+      if (apiError.code === HTTP_STATUS.NOT_FOUND) {
         // SUBDOMAIN_NOT_FOUND
         return true; // Subdomain is available
       }
@@ -157,7 +165,7 @@ class ApiClient {
   async createSubdomain(
     data: CreateSubdomainRequest
   ): Promise<CreateSubdomainResponse> {
-    return this.request<CreateSubdomainResponse>("/v1/domain", {
+    return this.request<CreateSubdomainResponse>(API_ENDPOINTS.DOMAINS, {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -167,14 +175,17 @@ class ApiClient {
     name: string,
     data: UpdateSubdomainRequest
   ): Promise<CreateSubdomainResponse> {
-    return this.request<CreateSubdomainResponse>(`/v1/domain/${name}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
+    return this.request<CreateSubdomainResponse>(
+      API_ENDPOINTS.UPDATE_DOMAIN(name),
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
   }
 
   async deleteSubdomain(name: string): Promise<DeleteResponse> {
-    return this.request<DeleteResponse>(`/v1/domain/${name}`, {
+    return this.request<DeleteResponse>(API_ENDPOINTS.DELETE_DOMAIN(name), {
       method: "DELETE",
     });
   }

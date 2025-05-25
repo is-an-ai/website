@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { TOAST_DURATION } from "@/lib/constants";
 
 interface ToastProps {
   message: string;
@@ -13,7 +14,7 @@ const Toast = ({
   type = "success",
   isVisible,
   onClose,
-  duration = 3000,
+  duration = TOAST_DURATION,
 }: ToastProps) => {
   useEffect(() => {
     if (isVisible) {

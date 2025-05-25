@@ -1,4 +1,5 @@
 import React from "react";
+import { DOMAIN_SUFFIX } from "@/lib/constants";
 
 interface BrowserMockupProps {
   children: React.ReactNode;
@@ -87,7 +88,9 @@ const BrowserMockup: React.FC<BrowserMockupProps> = ({ children }) => {
                 placeholder="my-ai-project"
                 className="font-mono text-cyan-600 bg-transparent outline-none border-none flex-1 text-sm"
               />
-              <span className="text-gray-900 font-mono text-sm">.is-an.ai</span>
+              <span className="text-gray-900 font-mono text-sm">
+                {DOMAIN_SUFFIX}
+              </span>
             </div>
           </div>
         </div>

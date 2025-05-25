@@ -14,3 +14,7 @@ export { default as BrowserMockup } from "./BrowserMockup";
 export { default as SubdomainChecker } from "./SubdomainChecker";
 export { default as StepCard } from "./StepCard";
 export { default as ExampleCard } from "./ExampleCard";
+
+// Modal components
+export { default as CreateSubdomainModal } from "./CreateSubdomainModal";
+export { default as EditSubdomainModal } from "./EditSubdomainModal";

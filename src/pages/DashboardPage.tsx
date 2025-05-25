@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubdomains } from "@/hooks/useSubdomains";
-import CreateSubdomainModal from "@/components/CreateSubdomainModal";
+import { CreateSubdomainModal, EditSubdomainModal } from "@/components";
 import Toast from "@/components/Toast";
+import { DOMAIN_SUFFIX } from "@/lib/constants";
+import { Subdomain } from "@/types/api";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -19,9 +21,19 @@ const DashboardPage = () => {
     isCheckingAvailability,
     availabilityResult,
     clearAvailabilityResult,
+    updateSubdomain,
+    deleteSubdomain,
   } = useSubdomains();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [editingSubdomain, setEditingSubdomain] = useState<Subdomain | null>(
+    null
+  );
+  const [deletingSubdomain, setDeletingSubdomain] = useState<Subdomain | null>(
+    null
+  );
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -49,6 +61,40 @@ const DashboardPage = () => {
     clearError();
   };
 
+  const handleCloseEditModal = () => {
+    setShowEditForm(false);
+    setEditingSubdomain(null);
+    clearError();
+  };
+
+  const handleEditSubdomain = (subdomain: Subdomain) => {
+    setEditingSubdomain(subdomain);
+    setShowEditForm(true);
+  };
+
+  const handleDeleteSubdomain = (subdomain: Subdomain) => {
+    setDeletingSubdomain(subdomain);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingSubdomain) return;
+
+    try {
+      await deleteSubdomain(deletingSubdomain.subdomainName);
+      showToast("Subdomain deleted successfully!");
+      setShowDeleteConfirm(false);
+      setDeletingSubdomain(null);
+    } catch {
+      // Error is already handled by the hook
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setDeletingSubdomain(null);
+  };
+
   const showToast = (
     message: string,
     type: "success" | "error" | "info" = "success"
@@ -62,9 +108,9 @@ const DashboardPage = () => {
 
   const handleCopySubdomain = async (subdomainName: string) => {
     try {
-      await navigator.clipboard.writeText(`${subdomainName}.is-an.ai`);
+      await navigator.clipboard.writeText(`${subdomainName}${DOMAIN_SUFFIX}`);
       showToast("Subdomain copied to clipboard!");
-    } catch (err) {
+    } catch {
       showToast("Failed to copy to clipboard", "error");
     }
   };
@@ -212,7 +258,8 @@ const DashboardPage = () => {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <h3 className="font-mono text-cyan-600 font-semibold text-lg">
-                          {subdomain.subdomainName}.is-an.ai
+                          {subdomain.subdomainName}
+                          {DOMAIN_SUFFIX}
                         </h3>
                         <button
                           onClick={() =>
@@ -244,17 +291,36 @@ const DashboardPage = () => {
                       {subdomain.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-500">
-                        <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                          {subdomain.record.type}:{" "}
-                          {Array.isArray(subdomain.record.value)
-                            ? subdomain.record.value.join(", ")
-                            : String(subdomain.record.value)}
-                        </span>
+                      <div className="text-xs text-gray-500 space-x-2">
+                        {subdomain.record.map((record, index) => (
+                          <span
+                            key={index}
+                            className="font-mono bg-gray-100 px-2 py-1 rounded"
+                          >
+                            {record.type}:{" "}
+                            {Array.isArray(record.value)
+                              ? record.value.join(", ")
+                              : String(record.value)}
+                          </span>
+                        ))}
                       </div>
-                      <div className="text-xs text-gray-500">
-                        Created{" "}
-                        {new Date(subdomain.createdAt).toLocaleDateString()}
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleEditSubdomain(subdomain)}
+                          className="text-cyan-600 hover:text-cyan-700 text-xs font-medium transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSubdomain(subdomain)}
+                          className="text-red-600 hover:text-red-700 text-xs font-medium transition-colors"
+                        >
+                          Delete
+                        </button>
+                        <div className="text-xs text-gray-500">
+                          Created{" "}
+                          {new Date(subdomain.createdAt).toLocaleDateString()}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -264,18 +330,142 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Create form modal placeholder */}
+        {/* Create form modal */}
         {showCreateForm && (
           <CreateSubdomainModal
             isOpen={showCreateForm}
             onClose={handleCloseModal}
-            onSubmit={createSubdomain}
+            onSubmit={async (data) => {
+              try {
+                await createSubdomain(data);
+                showToast("Subdomain created successfully!");
+              } catch {
+                // Error is already handled by the hook
+              }
+            }}
             onCheckAvailability={checkAvailability}
             isLoading={isLoading}
             isCheckingAvailability={isCheckingAvailability}
             availabilityResult={availabilityResult}
             error={error}
           />
+        )}
+
+        {/* Edit form modal */}
+        {showEditForm && (
+          <EditSubdomainModal
+            isOpen={showEditForm}
+            onClose={handleCloseEditModal}
+            onSubmit={async (data) => {
+              try {
+                await updateSubdomain(editingSubdomain!.subdomainName, data);
+                showToast("Subdomain updated successfully!");
+                handleCloseEditModal();
+              } catch {
+                // Error is already handled by the hook
+              }
+            }}
+            subdomain={editingSubdomain}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+
+        {/* Delete confirmation modal */}
+        {showDeleteConfirm && deletingSubdomain && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">
+                  Delete Subdomain
+                </h3>
+                <button
+                  onClick={handleCancelDelete}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  disabled={isLoading}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                    <svg
+                      className="w-6 h-6 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                      Are you sure?
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-700 mb-2">
+                    You are about to delete:
+                  </p>
+                  <p className="font-mono text-cyan-600 font-semibold">
+                    {deletingSubdomain.subdomainName}
+                    {DOMAIN_SUFFIX}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {deletingSubdomain.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCancelDelete}
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={isLoading}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Deleting...
+                    </div>
+                  ) : (
+                    "Delete Subdomain"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </main>
 

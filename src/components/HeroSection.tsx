@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import SubdomainChecker from "./SubdomainChecker";
 
 const HeroSection = () => {
@@ -23,6 +24,18 @@ const HeroSection = () => {
           </div>
 
           <SubdomainChecker />
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 transition-colors font-mono"
+            >
+              Go to Dashboard
+            </Link>
+            <span className="text-sm text-gray-500 font-mono">
+              Manage your subdomains
+            </span>
+          </div>
         </div>
       </div>
     </section>

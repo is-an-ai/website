@@ -2,6 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { User, AuthResponse, ApiError } from "@/types/api";
 import apiClient from "@/lib/api";
+import {
+  API_BASE_URL,
+  API_ENDPOINTS,
+  AUTH_TOKEN_KEY,
+  ROUTES,
+} from "@/lib/constants";
 
 interface UseAuthReturn {
   user: User | null;
@@ -13,8 +19,6 @@ interface UseAuthReturn {
   logout: () => void;
   clearError: () => void;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.is-an.ai";
 
 export const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
@@ -33,7 +37,7 @@ export const useAuth = (): UseAuthReturn => {
   }, []);
 
   const login = useCallback(() => {
-    window.location.href = `${API_BASE_URL}/v1/user/auth/github`;
+    window.location.href = `${API_BASE_URL}${API_ENDPOINTS.GITHUB_AUTH}`;
   }, []);
 
   const devLogin = useCallback(async () => {
@@ -63,12 +67,12 @@ export const useAuth = (): UseAuthReturn => {
     }
 
     try {
-      localStorage.setItem("auth_token", token);
+      localStorage.setItem(AUTH_TOKEN_KEY, token);
 
       const userInfo = JSON.parse(decodeURIComponent(encodedUser));
       setUser(userInfo);
 
-      window.history.replaceState({}, document.title, "/dashboard");
+      window.history.replaceState({}, document.title, ROUTES.DASHBOARD);
     } catch (err) {
       setError("Failed to process OAuth callback");
     } finally {

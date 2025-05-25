@@ -25,7 +25,7 @@ export interface Subdomain {
   subdomainId: string;
   subdomainName: string;
   description: string;
-  record: DNSRecord;
+  record: DNSRecord[];
   ownerId: string;
   createdAt: string;
   updatedAt: string;
@@ -34,19 +34,19 @@ export interface Subdomain {
 export interface CreateSubdomainRequest {
   subdomainName: string;
   description: string;
-  record: DNSRecord;
+  record: DNSRecord[];
 }
 
 export interface UpdateSubdomainRequest {
   description: string;
-  record: DNSRecord;
+  record: DNSRecord[];
 }
 
 export interface CreateSubdomainResponse {
   subdomainId: string;
   subdomainName: string;
   description: string;
-  record: DNSRecord;
+  record: DNSRecord[];
   ownerId: string;
 }
 

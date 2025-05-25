@@ -1,15 +1,13 @@
-import { useState, useCallback } from "react";
-import { CreateSubdomainRequest, DNSRecord } from "@/types/api";
+import { useState, useEffect } from "react";
+import { UpdateSubdomainRequest, DNSRecord, Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 
-interface CreateSubdomainModalProps {
+interface EditSubdomainModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateSubdomainRequest) => Promise<void>;
-  onCheckAvailability: (name: string) => Promise<boolean>;
+  onSubmit: (data: UpdateSubdomainRequest) => Promise<void>;
+  subdomain: Subdomain | null;
   isLoading: boolean;
-  isCheckingAvailability: boolean;
-  availabilityResult: boolean | null;
   error: string | null;
 }
 
@@ -20,18 +18,15 @@ const DNS_RECORD_TYPES = [
   { value: "TXT", label: "TXT Record", description: "Text record" },
 ] as const;
 
-const CreateSubdomainModal = ({
+const EditSubdomainModal = ({
   isOpen,
   onClose,
   onSubmit,
-  onCheckAvailability,
+  subdomain,
   isLoading,
-  isCheckingAvailability,
-  availabilityResult,
   error,
-}: CreateSubdomainModalProps) => {
+}: EditSubdomainModalProps) => {
   const [formData, setFormData] = useState({
-    subdomainName: "",
     description: "",
   });
 
@@ -39,23 +34,19 @@ const CreateSubdomainModal = ({
     { type: "A", value: "" },
   ]);
 
-  const [hasCheckedAvailability, setHasCheckedAvailability] = useState(false);
-  const [lastCheckedName, setLastCheckedName] = useState("");
-
-  const handleSubdomainNameChange = useCallback((value: string) => {
-    // Reset availability check when name changes
-    setHasCheckedAvailability(false);
-    setLastCheckedName("");
-    setFormData((prev) => ({ ...prev, subdomainName: value }));
-  }, []);
-
-  const handleCheckAvailability = useCallback(async () => {
-    if (!formData.subdomainName.trim()) return;
-
-    await onCheckAvailability(formData.subdomainName.trim());
-    setHasCheckedAvailability(true);
-    setLastCheckedName(formData.subdomainName.trim());
-  }, [formData.subdomainName, onCheckAvailability]);
+  // Initialize form data when subdomain changes
+  useEffect(() => {
+    if (subdomain) {
+      setFormData({
+        description: subdomain.description,
+      });
+      setRecords(
+        subdomain.record.length > 0
+          ? [...subdomain.record]
+          : [{ type: "A", value: "" }]
+      );
+    }
+  }, [subdomain]);
 
   const addRecord = () => {
     setRecords([...records, { type: "A", value: "" }]);
@@ -87,17 +78,6 @@ const CreateSubdomainModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !hasCheckedAvailability ||
-      lastCheckedName !== formData.subdomainName.trim()
-    ) {
-      return; // Force availability check first
-    }
-
-    if (!availabilityResult) {
-      return; // Can't submit if not available
-    }
-
     // Filter out empty records and trim values
     const validRecords = records
       .filter((record) => {
@@ -116,22 +96,13 @@ const CreateSubdomainModal = ({
       return; // Need at least one valid record
     }
 
-    const requestData: CreateSubdomainRequest = {
-      subdomainName: formData.subdomainName.trim(),
+    const requestData: UpdateSubdomainRequest = {
       description: formData.description.trim(),
       record: validRecords,
     };
 
     try {
       await onSubmit(requestData);
-      // Reset form on success
-      setFormData({
-        subdomainName: "",
-        description: "",
-      });
-      setRecords([{ type: "A", value: "" }]);
-      setHasCheckedAvailability(false);
-      setLastCheckedName("");
       onClose();
     } catch (err) {
       console.error(err);
@@ -139,7 +110,6 @@ const CreateSubdomainModal = ({
   };
 
   const isFormValid =
-    formData.subdomainName.trim() &&
     formData.description.trim() &&
     records.some((record) =>
       typeof record.value === "string"
@@ -147,18 +117,15 @@ const CreateSubdomainModal = ({
         : Array.isArray(record.value)
         ? record.value.length > 0
         : true
-    ) &&
-    hasCheckedAvailability &&
-    lastCheckedName === formData.subdomainName.trim() &&
-    availabilityResult === true;
+    );
 
-  if (!isOpen) return null;
+  if (!isOpen || !subdomain) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Create Subdomain</h3>
+          <h3 className="text-xl font-bold text-gray-900">Edit Subdomain</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -181,84 +148,25 @@ const CreateSubdomainModal = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Subdomain Name */}
+          {/* Subdomain Name (Read-only) */}
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-2">
               Subdomain Name
             </label>
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.subdomainName}
-                    onChange={(e) => handleSubdomainNameChange(e.target.value)}
-                    placeholder="my-awesome-project"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    disabled={isLoading}
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
-                    {DOMAIN_SUFFIX}
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleCheckAvailability}
-                disabled={
-                  !formData.subdomainName.trim() ||
-                  isCheckingAvailability ||
-                  isLoading
-                }
-                className="px-4 py-3 bg-cyan-600 text-white rounded-xl hover:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors whitespace-nowrap text-sm font-medium"
-              >
-                {isCheckingAvailability ? "Checking..." : "Check"}
-              </button>
+            <div className="relative">
+              <input
+                type="text"
+                value={subdomain.subdomainName}
+                readOnly
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 cursor-not-allowed"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                {DOMAIN_SUFFIX}
+              </span>
             </div>
-
-            {/* Availability Result */}
-            {hasCheckedAvailability &&
-              lastCheckedName === formData.subdomainName.trim() && (
-                <div className="mt-2">
-                  {availabilityResult === true ? (
-                    <div className="flex items-center text-green-600 text-sm">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Available!
-                    </div>
-                  ) : availabilityResult === false ? (
-                    <div className="flex items-center text-red-600 text-sm">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Already taken 😭
-                    </div>
-                  ) : null}
-                </div>
-              )}
-
-            {formData.subdomainName.trim() && !hasCheckedAvailability && (
-              <p className="mt-2 text-cyan-600 text-sm">
-                Please check availability before proceeding
-              </p>
-            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Subdomain name cannot be changed
+            </p>
           </div>
 
           {/* Description */}
@@ -436,10 +344,10 @@ const CreateSubdomainModal = ({
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Creating...
+                  Updating...
                 </div>
               ) : (
-                "Create Subdomain"
+                "Update Subdomain"
               )}
             </button>
           </div>
@@ -449,4 +357,4 @@ const CreateSubdomainModal = ({
   );
 };
 
-export default CreateSubdomainModal;
+export default EditSubdomainModal;

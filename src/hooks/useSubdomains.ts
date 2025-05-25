@@ -1,5 +1,10 @@
 import { useState, useCallback } from "react";
-import { Subdomain, CreateSubdomainRequest, ApiError } from "@/types/api";
+import {
+  Subdomain,
+  CreateSubdomainRequest,
+  UpdateSubdomainRequest,
+  ApiError,
+} from "@/types/api";
 import apiClient from "@/lib/api";
 
 interface UseSubdomainsReturn {
@@ -15,6 +20,11 @@ interface UseSubdomainsReturn {
   // Actions
   checkAvailability: (name: string) => Promise<boolean>;
   createSubdomain: (data: CreateSubdomainRequest) => Promise<void>;
+  updateSubdomain: (
+    name: string,
+    data: UpdateSubdomainRequest
+  ) => Promise<void>;
+  deleteSubdomain: (name: string) => Promise<void>;
   fetchMySubdomains: () => Promise<void>;
   clearError: () => void;
   clearAvailabilityResult: () => void;
@@ -108,6 +118,48 @@ export const useSubdomains = (): UseSubdomainsReturn => {
     [fetchMySubdomains]
   );
 
+  const updateSubdomain = useCallback(
+    async (name: string, data: UpdateSubdomainRequest): Promise<void> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        await apiClient.updateSubdomain(name, data);
+
+        // Refresh the list after update
+        await fetchMySubdomains();
+      } catch (err) {
+        const apiError = err as ApiError;
+        setError(apiError.message || "Failed to update subdomain");
+        throw err; // Re-throw so the component can handle it
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchMySubdomains]
+  );
+
+  const deleteSubdomain = useCallback(
+    async (name: string): Promise<void> => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        await apiClient.deleteSubdomain(name);
+
+        // Refresh the list after deletion
+        await fetchMySubdomains();
+      } catch (err) {
+        const apiError = err as ApiError;
+        setError(apiError.message || "Failed to delete subdomain");
+        throw err; // Re-throw so the component can handle it
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchMySubdomains]
+  );
+
   return {
     // State
     subdomains,
@@ -121,6 +173,8 @@ export const useSubdomains = (): UseSubdomainsReturn => {
     // Actions
     checkAvailability,
     createSubdomain,
+    updateSubdomain,
+    deleteSubdomain,
     fetchMySubdomains,
     clearError,
     clearAvailabilityResult,
