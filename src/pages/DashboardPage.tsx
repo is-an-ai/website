@@ -135,9 +135,9 @@ const DashboardPage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-3 sm:gap-0">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-mono">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-mono">
                 Dashboard
               </h1>
               <p className="text-sm text-gray-600">
@@ -146,7 +146,7 @@ const DashboardPage = () => {
             </div>
             <button
               onClick={logout}
-              className="text-gray-600 hover:text-gray-900 text-sm"
+              className="text-gray-600 hover:text-gray-900 text-sm self-start sm:self-auto"
             >
               Sign out
             </button>
@@ -200,21 +200,21 @@ const DashboardPage = () => {
 
         {/* Subdomains section */}
         <div className="bg-white rounded-xl shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <h2 className="text-lg font-semibold text-gray-900">
                 Your Subdomains
               </h2>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-cyan-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-cyan-700 transition-colors shadow-sm"
+                className="w-full sm:w-auto bg-cyan-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-cyan-700 transition-colors shadow-sm"
               >
                 Add Subdomain
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-4">
+          <div className="px-4 sm:px-6 py-4">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="w-6 h-6 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -238,7 +238,7 @@ const DashboardPage = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   No subdomains yet
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-4 px-4 text-center">
                   Get started by creating your first subdomain
                 </p>
                 <button
@@ -255,9 +255,9 @@ const DashboardPage = () => {
                     key={subdomain.subdomainId}
                     className="border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-mono text-cyan-600 font-semibold text-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2 sm:gap-0">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <h3 className="font-mono text-cyan-600 font-semibold text-base sm:text-lg truncate">
                           {subdomain.subdomainName}
                           {DOMAIN_SUFFIX}
                         </h3>
@@ -265,7 +265,7 @@ const DashboardPage = () => {
                           onClick={() =>
                             handleCopySubdomain(subdomain.subdomainName)
                           }
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 p-1"
                           title="Copy subdomain"
                         >
                           <svg
@@ -283,19 +283,21 @@ const DashboardPage = () => {
                           </svg>
                         </button>
                       </div>
-                      <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium">
+                      <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium self-start sm:self-auto">
                         ACTIVE
                       </span>
                     </div>
                     <p className="text-gray-700 text-sm mb-3 leading-relaxed">
                       {subdomain.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-gray-500 space-x-2">
+
+                    {/* DNS Records - Mobile optimized */}
+                    <div className="mb-3">
+                      <div className="text-xs text-gray-500 space-y-1 sm:space-y-0 sm:space-x-2 sm:flex sm:flex-wrap">
                         {subdomain.record.map((record, index) => (
                           <span
                             key={index}
-                            className="font-mono bg-gray-100 px-2 py-1 rounded"
+                            className="font-mono bg-gray-100 px-2 py-1 rounded block sm:inline-block"
                           >
                             {record.type}:{" "}
                             {Array.isArray(record.value)
@@ -304,23 +306,27 @@ const DashboardPage = () => {
                           </span>
                         ))}
                       </div>
+                    </div>
+
+                    {/* Actions - Mobile optimized */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+                      <div className="text-xs text-gray-500">
+                        Created{" "}
+                        {new Date(subdomain.createdAt).toLocaleDateString()}
+                      </div>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => handleEditSubdomain(subdomain)}
-                          className="text-cyan-600 hover:text-cyan-700 text-xs font-medium transition-colors"
+                          className="text-cyan-600 hover:text-cyan-700 text-sm font-medium transition-colors px-3 py-1 rounded hover:bg-cyan-50"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteSubdomain(subdomain)}
-                          className="text-red-600 hover:text-red-700 text-xs font-medium transition-colors"
+                          className="text-red-600 hover:text-red-700 text-sm font-medium transition-colors px-3 py-1 rounded hover:bg-red-50"
                         >
                           Delete
                         </button>
-                        <div className="text-xs text-gray-500">
-                          Created{" "}
-                          {new Date(subdomain.createdAt).toLocaleDateString()}
-                        </div>
                       </div>
                     </div>
                   </div>

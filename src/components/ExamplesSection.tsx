@@ -22,10 +22,10 @@ const ExamplesSection = () => {
   ];
 
   return (
-    <section className="py-16">
+    <section className="py-12 sm:py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 font-mono">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 font-mono">
             Live examples
           </h2>
           <p className="text-gray-600">
@@ -33,7 +33,7 @@ const ExamplesSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {examples.map((example) => (
             <ExampleCard
               key={example.subdomain}
@@ -43,7 +43,7 @@ const ExamplesSection = () => {
           ))}
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 sm:mt-8">
           <Link
             to="/examples"
             className="text-sm text-gray-600 hover:text-gray-900 underline hover:no-underline font-mono"
