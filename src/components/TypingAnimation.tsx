@@ -18,8 +18,6 @@ const TypingAnimation = ({ words, className = "" }: TypingAnimationProps) => {
   useEffect(() => {
     const interval = setInterval(
       () => {
-        console.log(phase, currentText);
-
         const currentWord = words[currentWordIndex];
 
         if (phase === "typing") {
