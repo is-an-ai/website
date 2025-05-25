@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { GITHUB_REPOSITORY_URL } from "@/lib/constants";
+import { Sparkle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -21,19 +24,22 @@ const Header = () => {
             <Link to="/" className="text-xl font-mono font-bold text-gray-900">
               is-an.ai
             </Link>
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono">
+            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-mono relative">
               open source
+              <Sparkle className="w-4 h-4 absolute top-[-3px] right-[-6px]" />
             </span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6 text-sm">
-            <Link
-              to="/dashboard"
-              className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
-            >
-              dashboard
-            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/dashboard"
+                className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
+              >
+                dashboard
+              </Link>
+            )}
             <Link
               to="/docs"
               className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
@@ -105,13 +111,15 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white">
             <nav className="px-2 pt-2 pb-3 space-y-1">
-              <Link
-                to="/dashboard"
-                onClick={closeMobileMenu}
-                className="block px-3 py-2 text-base font-mono text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-              >
-                dashboard
-              </Link>
+              {isAuthenticated && (
+                <Link
+                  to="/dashboard"
+                  onClick={closeMobileMenu}
+                  className="block px-3 py-2 text-base font-mono text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                >
+                  dashboard
+                </Link>
+              )}
               <Link
                 to="/docs"
                 onClick={closeMobileMenu}
