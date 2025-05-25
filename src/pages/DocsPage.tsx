@@ -122,11 +122,19 @@ const DocsPage = () => {
                 </div>
                 <div className="bg-gray-50 rounded p-3">
                   <p className="text-sm text-gray-600 mb-2">
-                    2. Register subdomain on is-an.ai
+                    2. Register subdomain on is-an.ai with CNAME
                   </p>
                   <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
-                    Subdomain: my-project.is-an.ai →
-                    https://my-project.vercel.app
+                    Subdomain: my-project.is-an.ai → cname.vercel-dns.com
+                    (CNAME)
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    3. Add custom domain in Vercel
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Project Settings → Domains → Add: my-project.is-an.ai
                   </code>
                 </div>
                 <p className="text-xs text-gray-500">
@@ -156,11 +164,19 @@ const DocsPage = () => {
                 </div>
                 <div className="bg-gray-50 rounded p-3">
                   <p className="text-sm text-gray-600 mb-2">
-                    2. Point your is-an.ai subdomain
+                    2. Register subdomain on is-an.ai with CNAME
                   </p>
                   <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
-                    Subdomain: my-project.is-an.ai →
-                    https://my-project.pages.dev
+                    Subdomain: my-project.is-an.ai → my-project.pages.dev
+                    (CNAME)
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    3. Add custom domain in Cloudflare Pages
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Pages → Custom domains → Set up: my-project.is-an.ai
                   </code>
                 </div>
                 <p className="text-xs text-gray-500">
@@ -190,11 +206,18 @@ const DocsPage = () => {
                 </div>
                 <div className="bg-gray-50 rounded p-3">
                   <p className="text-sm text-gray-600 mb-2">
-                    2. Create your is-an.ai subdomain
+                    2. Register subdomain on is-an.ai with CNAME
                   </p>
                   <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
-                    Subdomain: my-project.is-an.ai →
-                    https://username.github.io/repo-name
+                    Subdomain: my-project.is-an.ai → username.github.io (CNAME)
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    3. Configure custom domain in GitHub
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Settings → Pages → Custom domain: my-project.is-an.ai
                   </code>
                 </div>
                 <p className="text-xs text-gray-500">
@@ -222,11 +245,19 @@ const DocsPage = () => {
                 </div>
                 <div className="bg-gray-50 rounded p-3">
                   <p className="text-sm text-gray-600 mb-2">
-                    2. Set up your custom subdomain
+                    2. Register subdomain on is-an.ai with CNAME
                   </p>
                   <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
                     Subdomain: my-project.is-an.ai →
-                    https://amazing-site-123.netlify.app
+                    amazing-site-123.netlify.app (CNAME)
+                  </code>
+                </div>
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    3. Add custom domain in Netlify
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    Site Settings → Domain management → Add: my-project.is-an.ai
                   </code>
                 </div>
                 <p className="text-xs text-gray-500">
