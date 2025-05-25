@@ -11,8 +11,6 @@ import {
   AUTH_TOKEN_KEY,
   API_ENDPOINTS,
   PUBLIC_ENDPOINTS,
-  ERROR_CODES,
-  CUSTOM_EVENTS,
   HTTP_STATUS,
 } from "./constants";
 
@@ -70,15 +68,8 @@ class ApiClient {
         }));
 
         // Handle token expiration
-        if (
-          errorData.code === ERROR_CODES.TOKEN_EXPIRED ||
-          errorData.code === ERROR_CODES.INVALID_TOKEN
-        ) {
+        if (errorData.code === HTTP_STATUS.UNAUTHORIZED) {
           this.clearToken();
-          // Optionally redirect to login or emit an event
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.TOKEN_EXPIRED));
-          }
         }
 
         throw errorData;

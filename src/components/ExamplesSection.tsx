@@ -4,7 +4,7 @@ import { DOMAIN_SUFFIX } from "@/lib/constants";
 import ExampleCard from "./ExampleCard";
 
 const ExamplesSection = () => {
-  const { subdomains, isLoading } = useAllSubdomains();
+  const { subdomains, isLoading, error } = useAllSubdomains();
 
   // Show first 4 subdomains as examples
   const examples = subdomains.slice(0, 4).map((subdomain) => ({
@@ -12,27 +12,41 @@ const ExamplesSection = () => {
     description: subdomain.description,
   }));
 
-  // Fallback examples if no data or error
-  const fallbackExamples = [
-    {
-      subdomain: "your-project.is-an.ai",
-      description: "Your AI project could be here",
-    },
-    {
-      subdomain: "ml-research.is-an.ai",
-      description: "Machine learning research project",
-    },
-    {
-      subdomain: "ai-demo.is-an.ai",
-      description: "AI model demonstration",
-    },
-    {
-      subdomain: "chatbot.is-an.ai",
-      description: "Conversational AI interface",
-    },
-  ];
-
-  const displayExamples = examples.length > 0 ? examples : fallbackExamples;
+  if (error) {
+    return (
+      <section className="py-12 sm:py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 font-mono">
+              Live examples
+            </h2>
+            <div className="text-red-500 mb-4">
+              <svg
+                className="w-8 h-8 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-600 mb-4">Failed to load examples</p>
+            <Link
+              to="/examples"
+              className="text-sm text-cyan-600 hover:text-cyan-800 underline hover:no-underline font-mono"
+            >
+              View examples page &gt;
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 sm:py-16">
@@ -44,7 +58,7 @@ const ExamplesSection = () => {
           <p className="text-gray-600">
             {examples.length > 0
               ? "AI projects using is-an.ai subdomains"
-              : "Examples of AI projects using subdomains"}
+              : "Real AI projects will appear here"}
           </p>
         </div>
 
@@ -55,24 +69,43 @@ const ExamplesSection = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {displayExamples.map((example) => (
-                <ExampleCard
-                  key={example.subdomain}
-                  subdomain={example.subdomain}
-                  description={example.description}
-                />
-              ))}
-            </div>
+            {examples.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  {examples.map((example) => (
+                    <ExampleCard
+                      key={example.subdomain}
+                      subdomain={example.subdomain}
+                      description={example.description}
+                    />
+                  ))}
+                </div>
 
-            <div className="text-center mt-6 sm:mt-8">
-              <Link
-                to="/examples"
-                className="text-sm text-gray-600 hover:text-gray-900 underline hover:no-underline font-mono"
-              >
-                View all &gt;
-              </Link>
-            </div>
+                <div className="text-center mt-6 sm:mt-8">
+                  <Link
+                    to="/examples"
+                    className="text-sm text-gray-600 hover:text-gray-900 underline hover:no-underline font-mono"
+                  >
+                    View all {subdomains.length} projects &gt;
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-gray-500 text-lg font-mono mb-2">
+                  No projects yet
+                </div>
+                <p className="text-gray-400 text-sm mb-6">
+                  Be the first to register a subdomain!
+                </p>
+                <Link
+                  to="/"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 transition-colors font-mono"
+                >
+                  Register Your Subdomain
+                </Link>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -87,18 +87,6 @@ export const useAuth = (): UseAuthReturn => {
   }, [location.pathname, handleOAuthCallback]);
 
   useEffect(() => {
-    const handleTokenExpired = () => {
-      setUser(null);
-      setError("Your session has expired. Please log in again.");
-    };
-
-    window.addEventListener("auth:token-expired", handleTokenExpired);
-    return () => {
-      window.removeEventListener("auth:token-expired", handleTokenExpired);
-    };
-  }, []);
-
-  useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const error = urlParams.get("error");
 
