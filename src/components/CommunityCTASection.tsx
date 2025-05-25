@@ -1,15 +1,14 @@
-import { GITHUB_REPOSITORY_URL } from "@/lib/constants";
+import { DISCORD_INVITE_URL, GITHUB_REPOSITORY_URL } from "@/lib/constants";
 
 const CommunityCTASection = () => {
   return (
     <section className="py-12 sm:py-16 bg-gray-900 text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 font-mono">
-          Built by the community
+          Open source project
         </h2>
         <p className="text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
-          This project is open source and maintained by developers like you.
-          Contribute code, report bugs, or suggest features.
+          Contribute code, report bugs, or request features on GitHub.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <a
@@ -27,9 +26,14 @@ const CommunityCTASection = () => {
             </svg>
             Contribute on GitHub
           </a>
-          <button className="inline-flex items-center justify-center px-6 py-3 border border-gray-600 text-white font-mono text-sm rounded-lg hover:border-gray-500 transition-colors">
+          <a
+            href={DISCORD_INVITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-6 py-3 border border-gray-600 text-white font-mono text-sm rounded-lg hover:border-gray-500 transition-colors"
+          >
             Join Discord
-          </button>
+          </a>
         </div>
       </div>
     </section>

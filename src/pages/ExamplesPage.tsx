@@ -87,12 +87,11 @@ const ExamplesPage = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 font-mono">
-            AI Project Showcase
+            AI Projects
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover amazing AI projects built by researchers and developers
-            using <span className="font-mono font-semibold">is-an.ai</span>{" "}
-            subdomains
+            AI projects using{" "}
+            <span className="font-mono font-semibold">is-an.ai</span> subdomains
           </p>
         </div>
 
@@ -188,11 +187,10 @@ const ExamplesPage = () => {
         {/* Call to Action */}
         <div className="mt-16 text-center bg-white rounded-lg border p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 font-mono">
-            Want to showcase your AI project?
+            Want to add your AI project?
           </h2>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Join the community of AI researchers and developers. Get your own
-            subdomain and share your innovation with the world.
+            Get your own subdomain and deploy your AI project.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

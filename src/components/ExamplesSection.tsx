@@ -19,16 +19,16 @@ const ExamplesSection = () => {
       description: "Your AI project could be here",
     },
     {
-      subdomain: "amazing-ai.is-an.ai",
-      description: "Join the community of AI innovators",
-    },
-    {
       subdomain: "ml-research.is-an.ai",
-      description: "Share your research with the world",
+      description: "Machine learning research project",
     },
     {
       subdomain: "ai-demo.is-an.ai",
-      description: "Showcase your AI demonstrations",
+      description: "AI model demonstration",
+    },
+    {
+      subdomain: "chatbot.is-an.ai",
+      description: "Conversational AI interface",
     },
   ];
 
@@ -43,8 +43,8 @@ const ExamplesSection = () => {
           </h2>
           <p className="text-gray-600">
             {examples.length > 0
-              ? "AI projects already using is-an.ai subdomains"
-              : "Join the growing community of AI developers"}
+              ? "AI projects using is-an.ai subdomains"
+              : "Examples of AI projects using subdomains"}
           </p>
         </div>
 

@@ -21,40 +21,17 @@ const Footer = () => {
               </a>
             </p>
           </div>
-
-          <div className="flex flex-wrap gap-6 text-xs font-mono">
-            <a
-              href="#"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              how it works
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              api docs
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              community
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              status
-            </a>
-          </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center text-xs font-mono text-gray-500">
-          <p>Built by developers, for developers. MIT licensed.</p>
+          <p>Open source. MIT licensed.</p>
           <p className="mt-2 md:mt-0">
             Inspired by{" "}
-            <a href="#" className="underline hover:no-underline">
+            <a
+              href="https://is-a.dev"
+              className="underline hover:no-underline"
+              target="_blank"
+            >
               is-a.dev
             </a>
           </p>

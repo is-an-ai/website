@@ -343,7 +343,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
             </div>
 
             <p className="text-xs text-gray-500 mt-3 sm:mt-4">
-              Free • Instant setup • SSL included
+              Free • SSL included
             </p>
 
             {renderAuthPrompt()}

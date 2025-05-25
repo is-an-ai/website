@@ -5,6 +5,8 @@ export const API_BASE_URL =
 // GitHub Configuration
 export const GITHUB_REPOSITORY_URL = "https://github.com/is-an-ai";
 
+export const DISCORD_INVITE_URL = "https://discord.gg/gK769bxq3x";
+
 // Domain Configuration
 export const DOMAIN_SUFFIX = ".is-an.ai";
 export const BASE_DOMAIN = "is-an.ai";

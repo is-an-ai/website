@@ -8,11 +8,11 @@ Free subdomains for AI projects. No GitHub PRs, no DNS config, no waiting.
 
 ### Key Features
 
-- 🚀 **Instant Registration** - Get your subdomain in seconds
-- 🔐 **GitHub OAuth** - Simple authentication, no account creation needed
-- 🎯 **AI-Focused** - Perfect for AI researchers, developers, and enthusiasts
-- 🆓 **Completely Free** - No hidden costs or limitations
-- 🌐 **No Technical Knowledge Required** - No DNS configuration or GitHub skills needed
+- **Quick Registration** - Get your subdomain in minutes
+- **GitHub OAuth** - Simple authentication, no account creation needed
+- **AI-Focused** - For AI researchers, developers, and enthusiasts
+- **Free** - No costs or limitations
+- **No Technical Knowledge Required** - No DNS configuration or GitHub skills needed
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ Free subdomains for AI projects. No GitHub PRs, no DNS config, no waiting.
 1. **Visit** [is-an.ai](https://is-an.ai)
 2. **Check availability** of your desired subdomain
 3. **Sign in** with GitHub OAuth
-4. **Register** your subdomain instantly
+4. **Register** your subdomain
 5. **Configure** your target URL in the dashboard
 
 That's it! Your subdomain will be active immediately.
@@ -46,14 +46,14 @@ is-an.ai manages DNS records through a public GitHub repository. When you regist
 
 ## Use Cases
 
-Perfect for:
+Good for:
 
-- 🤖 **AI/ML Projects** - Showcase your models and demos
-- 🔬 **Research Projects** - Share your AI research and papers
-- 🛠️ **AI Tools** - Deploy your AI-powered applications
-- 📚 **Educational Content** - AI tutorials and learning resources
-- 🎮 **AI Games** - Interactive AI experiences
-- 💼 **Portfolio Sites** - Highlight your AI work
+- **AI/ML Projects** - Host your models and demos
+- **Research Projects** - Share your AI research and papers
+- **AI Tools** - Deploy your AI-powered applications
+- **Educational Content** - AI tutorials and learning resources
+- **AI Games** - Interactive AI experiences
+- **Portfolio Sites** - Display your AI work
 
 ## Development
 
@@ -72,21 +72,20 @@ pnpm build
 
 ## Contributing
 
-We welcome contributions! Whether it's:
+We welcome contributions:
 
-- 🐛 Bug reports and fixes
-- ✨ Feature suggestions and implementations
-- 📖 Documentation improvements
-- 🎨 UI/UX enhancements
+- Bug reports and fixes
+- Feature suggestions and implementations
+- Documentation improvements
+- UI/UX enhancements
 
 Please check our [GitHub repository](https://github.com/is-an-ai/is-an.ai-website) for contribution guidelines.
 
 ## Support
 
-- 📧 **Email**: support@is-an.ai
-- 💬 **GitHub Issues**: [Report bugs or request features](https://github.com/is-an-ai/is-an.ai-website/issues)
-- 🌟 **Star us** on GitHub if you find this useful!
+- **Email**: support@is-an.ai
+- **GitHub Issues**: [Report bugs or request features](https://github.com/is-an-ai/is-an.ai-website/issues)
 
 ---
 
-**Made with ❤️ for the AI community**
+Open source project for the AI community
