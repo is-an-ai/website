@@ -7,6 +7,7 @@ import {
   API_ENDPOINTS,
   AUTH_TOKEN_KEY,
   ROUTES,
+  HTTP_STATUS,
 } from "@/lib/constants";
 
 interface UseAuthReturn {
@@ -71,8 +72,10 @@ export const useAuth = (): UseAuthReturn => {
           await apiClient.getMySubdomains();
           setUser({ id: "current", name: "Authenticated User" });
         }
-      } catch {
-        apiClient.logout();
+      } catch (error) {
+        if (error instanceof Error && 'code' in error && (error as any).code === HTTP_STATUS.UNAUTHORIZED) {
+          apiClient.logout();
+        }
       } finally {
         setIsLoading(false);
       }
