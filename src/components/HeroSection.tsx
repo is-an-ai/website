@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import SubdomainChecker from "./SubdomainChecker";
 import TypingAnimation from "./TypingAnimation";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 
 const HeroSection = () => {

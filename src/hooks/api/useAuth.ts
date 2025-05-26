@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { User } from "@/types/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { User, ApiError } from "@/types/api";
 import apiClient from "@/lib/api";
 import {
   API_BASE_URL,
@@ -20,11 +21,47 @@ interface UseAuthReturn {
   clearError: () => void;
 }
 
+// Auth query key
+const authKeys = {
+  user: ["auth", "user"] as const,
+};
+
 export const useAuth = (): UseAuthReturn => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const location = useLocation();
+  const queryClient = useQueryClient();
+
+  // Use React Query for user data
+  const {
+    data: user,
+    isLoading: isQueryLoading,
+    error: queryError,
+  } = useQuery({
+    queryKey: authKeys.user,
+    queryFn: async () => {
+      if (!apiClient.isAuthenticated()) {
+        return null;
+      }
+
+      try {
+        // Verify auth by making an API call
+        await apiClient.getMySubdomains();
+        return { id: "current", name: "Authenticated User" } as User;
+      } catch (error) {
+        const apiError = error as unknown as ApiError;
+        if (apiError.code === HTTP_STATUS.UNAUTHORIZED) {
+          apiClient.logout();
+          throw new Error("Authentication expired");
+        }
+        throw error;
+      }
+    },
+    enabled: location.pathname !== "/auth/callback",
+    retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const [isCallbackLoading, setIsCallbackLoading] = useState(false);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -32,9 +69,10 @@ export const useAuth = (): UseAuthReturn => {
 
   const logout = useCallback(() => {
     apiClient.logout();
-    setUser(null);
+    queryClient.setQueryData(authKeys.user, null);
+    queryClient.clear(); // Clear all cached data on logout
     setError(null);
-  }, []);
+  }, [queryClient]);
 
   const login = useCallback(() => {
     window.location.href = `${API_BASE_URL}${API_ENDPOINTS.GITHUB_AUTH}`;
@@ -47,7 +85,7 @@ export const useAuth = (): UseAuthReturn => {
 
     if (!token || !encodedUser) {
       setError("Invalid OAuth callback - missing token or user data");
-      setIsLoading(false);
+      setIsCallbackLoading(false);
       return;
     }
 
@@ -55,38 +93,24 @@ export const useAuth = (): UseAuthReturn => {
       localStorage.setItem(AUTH_TOKEN_KEY, token);
 
       const userInfo = JSON.parse(decodeURIComponent(encodedUser));
-      setUser(userInfo);
+
+      // Update React Query cache
+      queryClient.setQueryData(authKeys.user, userInfo);
 
       window.history.replaceState({}, document.title, ROUTES.DASHBOARD);
     } catch (err) {
       setError(`Failed to process OAuth callback: ${err}`);
     } finally {
-      setIsLoading(false);
+      setIsCallbackLoading(false);
     }
-  }, [location.search]);
+  }, [location.search, queryClient]);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        if (apiClient.isAuthenticated()) {
-          await apiClient.getMySubdomains();
-          setUser({ id: "current", name: "Authenticated User" });
-        }
-      } catch (error) {
-        if (error instanceof Error && 'code' in error && (error as any).code === HTTP_STATUS.UNAUTHORIZED) {
-          apiClient.logout();
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (location.pathname === "/auth/callback") {
+      setIsCallbackLoading(true);
       handleOAuthCallback();
       return;
     }
-
-    checkAuth();
   }, [location.pathname, handleOAuthCallback]);
 
   useEffect(() => {
@@ -95,12 +119,21 @@ export const useAuth = (): UseAuthReturn => {
 
     if (error && location.pathname === "/auth/callback") {
       setError(`OAuth error: ${error}`);
-      setIsLoading(false);
+      setIsCallbackLoading(false);
     }
   }, [location.search, location.pathname]);
 
+  // Handle query errors
+  useEffect(() => {
+    if (queryError) {
+      setError(queryError.message);
+    }
+  }, [queryError]);
+
+  const isLoading = isQueryLoading || isCallbackLoading;
+
   return {
-    user,
+    user: user || null,
     isAuthenticated: !!user,
     isLoading,
     error,

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { useSubdomains } from "@/hooks/useSubdomains";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
+import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 
 interface SubdomainCheckerProps {
   onAvailabilityCheck?: (subdomain: string, isAvailable: boolean) => void;
@@ -8,34 +8,48 @@ interface SubdomainCheckerProps {
 
 const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
   const [subdomainInput, setSubdomainInput] = useState("");
+  const [checkingName, setCheckingName] = useState("");
   const { isAuthenticated, login } = useAuth();
+
+  // Use React Query for availability checking
   const {
-    isCheckingAvailability,
-    availabilityResult,
+    data: availabilityResult,
+    isLoading: isCheckingAvailability,
     error,
-    checkAvailability,
-    clearError,
-    clearAvailabilityResult,
-  } = useSubdomains();
+  } = useSubdomainAvailability(checkingName);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
       setSubdomainInput(value);
-      clearAvailabilityResult();
-      clearError();
+      // Clear previous check when input changes
+      if (checkingName && checkingName !== value) {
+        setCheckingName("");
+      }
     },
-    [clearAvailabilityResult, clearError]
+    [checkingName]
   );
 
-  const handleCheckAvailability = useCallback(async () => {
+  const handleCheckAvailability = useCallback(() => {
     if (!subdomainInput.trim()) {
       return;
     }
 
-    const isAvailable = await checkAvailability(subdomainInput.trim());
-    onAvailabilityCheck?.(subdomainInput.trim(), isAvailable);
-  }, [subdomainInput, checkAvailability, onAvailabilityCheck]);
+    const trimmedName = subdomainInput.trim();
+    setCheckingName(trimmedName);
+
+    // Call the callback if availability result is available
+    if (availabilityResult !== undefined) {
+      onAvailabilityCheck?.(trimmedName, availabilityResult);
+    }
+  }, [subdomainInput, availabilityResult, onAvailabilityCheck]);
+
+  // Call callback when availability result changes
+  React.useEffect(() => {
+    if (checkingName && availabilityResult !== undefined) {
+      onAvailabilityCheck?.(checkingName, availabilityResult);
+    }
+  }, [checkingName, availabilityResult, onAvailabilityCheck]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -45,6 +59,8 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
     },
     [handleCheckAvailability]
   );
+
+  const hasChecked = checkingName === subdomainInput.trim();
 
   const renderResult = () => {
     if (error) {
@@ -63,12 +79,14 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span className="text-sm text-center">{error}</span>
+          <span className="text-sm text-center">
+            Error checking availability
+          </span>
         </div>
       );
     }
 
-    if (availabilityResult === true) {
+    if (hasChecked && availabilityResult === true) {
       return (
         <div className="flex items-center justify-center space-x-2 text-green-600">
           <svg
@@ -91,7 +109,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
       );
     }
 
-    if (availabilityResult === false) {
+    if (hasChecked && availabilityResult === false) {
       return (
         <div className="flex items-center justify-center space-x-2 text-orange-600">
           <svg
@@ -202,152 +220,65 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
                 </svg>
               </button>
             </div>
+            <div className="flex-1 bg-white rounded px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 font-mono">
+              https://
+              <span className="text-cyan-600 font-semibold">
+                {subdomainInput || "your-project"}
+              </span>
+              .is-an.ai
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-4 sm:p-6">
+          <div className="text-center mb-4 sm:mb-6">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+              Check Subdomain Availability
+            </h3>
+            <p className="text-sm sm:text-base text-gray-600">
+              Enter your desired subdomain to check if it's available
+            </p>
           </div>
 
-          {/* Address Bar */}
-          <div className="mt-2 sm:mt-3">
-            <div className="flex items-center bg-white rounded border border-gray-300 px-2 sm:px-3 py-2">
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 mr-1 sm:mr-2 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-              <span className="text-gray-500 font-mono text-xs sm:text-sm">
-                https://
-              </span>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4">
+            <div className="flex-1 relative">
               <input
                 type="text"
                 value={subdomainInput}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
-                placeholder="my-ai-project"
-                className="font-mono text-cyan-600 bg-transparent outline-none border-none flex-1 text-xs sm:text-sm min-w-0"
-                disabled={isCheckingAvailability}
+                placeholder="your-awesome-project"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm sm:text-base"
+                maxLength={63}
               />
-              <span className="text-gray-900 font-mono text-xs sm:text-sm">
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs sm:text-sm font-mono">
                 .is-an.ai
               </span>
             </div>
-          </div>
-        </div>
-
-        {/* Browser Content Area */}
-        <div className="bg-white p-4 sm:p-6 lg:p-8">
-          <div className="text-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <button
+              onClick={handleCheckAvailability}
+              disabled={!subdomainInput.trim() || isCheckingAvailability}
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm sm:text-base font-medium whitespace-nowrap"
+            >
               {isCheckingAvailability ? (
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-500 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+                <div className="flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Checking...
+                </div>
               ) : (
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+                "Check"
               )}
-            </div>
-
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-              {isCheckingAvailability
-                ? "Checking availability..."
-                : "Ready to check availability?"}
-            </h3>
-
-            <p className="text-gray-600 mb-4 sm:mb-6 text-sm px-2">
-              Enter your desired subdomain in the address bar above
-            </p>
-
-            {renderResult()}
-
-            <div className="mt-4 sm:mt-6">
-              <button
-                onClick={handleCheckAvailability}
-                disabled={!subdomainInput.trim() || isCheckingAvailability}
-                className="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-cyan-600 text-white font-medium text-sm rounded-lg hover:bg-cyan-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
-              >
-                {isCheckingAvailability ? (
-                  <>
-                    <svg
-                      className="w-4 h-4 mr-2 animate-spin flex-shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Checking...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4 mr-2 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                    Check Availability
-                  </>
-                )}
-              </button>
-            </div>
-
-            <p className="text-xs text-gray-500 mt-3 sm:mt-4">
-              Free • SSL included
-            </p>
-
-            {renderAuthPrompt()}
+            </button>
           </div>
+
+          {/* Result */}
+          <div className="min-h-[2rem] flex items-center justify-center">
+            {renderResult()}
+          </div>
+
+          {/* Auth prompt */}
+          {renderAuthPrompt()}
         </div>
       </div>
     </div>

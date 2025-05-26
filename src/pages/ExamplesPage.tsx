@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAllSubdomains } from "@/hooks/useAllSubdomains";
+import { useAllSubdomains } from "@/hooks/api/useSubdomains";
 import { Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 
@@ -26,7 +26,12 @@ const transformSubdomainToProject = (subdomain: Subdomain): Project => {
 };
 
 const ExamplesPage = () => {
-  const { subdomains, isLoading, error, refetch } = useAllSubdomains();
+  const {
+    data: subdomains = [],
+    isLoading,
+    error,
+    refetch,
+  } = useAllSubdomains();
 
   // Transform subdomains to projects
   const projects: Project[] = useMemo(() => {
@@ -69,9 +74,9 @@ const ExamplesPage = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Failed to load projects
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 mb-4">{error.message}</p>
           <button
-            onClick={refetch}
+            onClick={() => refetch()}
             className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors"
           >
             Try Again

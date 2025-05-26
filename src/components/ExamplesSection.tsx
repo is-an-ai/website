@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { useAllSubdomains } from "@/hooks/useAllSubdomains";
+import { useAllSubdomains } from "@/hooks/api/useSubdomains";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
+import { Subdomain } from "@/types/api";
 import ExampleCard from "./ExampleCard";
 
 const ExamplesSection = () => {
-  const { subdomains, isLoading, error } = useAllSubdomains();
+  const { data: subdomains = [], isLoading, error } = useAllSubdomains();
 
   // Show first 4 subdomains as examples
-  const examples = subdomains.slice(0, 4).map((subdomain) => ({
+  const examples = subdomains.slice(0, 4).map((subdomain: Subdomain) => ({
     subdomain: `${subdomain.subdomainName}${DOMAIN_SUFFIX}`,
     description: subdomain.description,
   }));
@@ -72,13 +73,15 @@ const ExamplesSection = () => {
             {examples.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  {examples.map((example) => (
-                    <ExampleCard
-                      key={example.subdomain}
-                      subdomain={example.subdomain}
-                      description={example.description}
-                    />
-                  ))}
+                  {examples.map(
+                    (example: { subdomain: string; description: string }) => (
+                      <ExampleCard
+                        key={example.subdomain}
+                        subdomain={example.subdomain}
+                        description={example.description}
+                      />
+                    )
+                  )}
                 </div>
 
                 <div className="text-center mt-6 sm:mt-8">
