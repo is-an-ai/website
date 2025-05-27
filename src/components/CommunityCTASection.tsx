@@ -1,4 +1,5 @@
 import { DISCORD_INVITE_URL, GITHUB_REPOSITORY_URL } from "@/lib/constants";
+import { CoffeeIcon } from "lucide-react";
 
 const CommunityCTASection = () => {
   return (
@@ -33,6 +34,15 @@ const CommunityCTASection = () => {
             className="inline-flex items-center justify-center px-6 py-3 border border-gray-600 text-white font-mono text-sm rounded-lg hover:border-gray-500 transition-colors"
           >
             Join Discord
+          </a>
+          <a
+            href="https://buymeacoffee.com/dohyun682t"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center px-6 py-3 bg-yellow-500 text-gray-900 font-mono text-sm rounded-lg hover:bg-yellow-400 transition-colors"
+          >
+            <CoffeeIcon className="w-4 h-4 mr-2 flex-shrink-0" />
+            Buy me a coffee
           </a>
         </div>
       </div>
