@@ -9,7 +9,7 @@ import {
 } from "@/hooks/api/useSubdomains";
 import { CreateSubdomainModal, EditSubdomainModal } from "@/components";
 import Toast from "@/components/Toast";
-import { DOMAIN_SUFFIX } from "@/lib/constants";
+import { DOMAIN_SUFFIX, MAX_SUBDOMAINS_PER_USER } from "@/lib/constants";
 import {
   Subdomain,
   CreateSubdomainRequest,
@@ -63,7 +63,18 @@ const DashboardPage = () => {
     setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
+  // Check if user has reached subdomain limit
+  const hasReachedLimit = subdomains.length >= MAX_SUBDOMAINS_PER_USER;
+
   const handleCreateSubdomain = async (data: CreateSubdomainRequest) => {
+    if (hasReachedLimit) {
+      showToast(
+        `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
+        "error"
+      );
+      return;
+    }
+
     try {
       await createMutation.mutateAsync(data);
       showToast("Subdomain created successfully!");
@@ -170,6 +181,32 @@ const DashboardPage = () => {
           </div>
         )}
 
+        {/* Subdomain limit warning */}
+        {hasReachedLimit && (
+          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <svg
+                className="w-5 h-5 text-amber-500 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+              <span className="text-amber-800 text-sm">
+                You have reached the maximum limit of {MAX_SUBDOMAINS_PER_USER}{" "}
+                subdomains per account. Delete an existing subdomain to create a
+                new one.
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Create subdomain section */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
@@ -178,12 +215,19 @@ const DashboardPage = () => {
                 Your Subdomains
               </h2>
               <p className="text-sm text-gray-600">
-                Manage your is-an.ai subdomains
+                Manage your is-an.ai subdomains ({subdomains.length}/
+                {MAX_SUBDOMAINS_PER_USER})
               </p>
             </div>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium"
+              disabled={hasReachedLimit}
+              className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              title={
+                hasReachedLimit
+                  ? `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`
+                  : undefined
+              }
             >
               Create Subdomain
             </button>
@@ -279,7 +323,7 @@ const DashboardPage = () => {
 
       {/* Modals */}
       <CreateSubdomainModal
-        isOpen={showCreateForm}
+        isOpen={showCreateForm && !hasReachedLimit}
         onClose={() => setShowCreateForm(false)}
         onSubmit={handleCreateSubdomain}
         isLoading={createMutation.isPending}

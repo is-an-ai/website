@@ -10,6 +10,7 @@ export const DISCORD_INVITE_URL = "https://discord.gg/gK769bxq3x";
 // Domain Configuration
 export const DOMAIN_SUFFIX = ".is-an.ai";
 export const BASE_DOMAIN = "is-an.ai";
+export const MAX_SUBDOMAINS_PER_USER = 10;
 
 // Local Storage Keys
 export const AUTH_TOKEN_KEY = "auth_token";

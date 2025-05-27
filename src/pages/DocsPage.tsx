@@ -282,7 +282,8 @@ const DocsPage = () => {
     },
     {
       question: "How many subdomains can I register?",
-      answer: "There's no strict limit, but please be reasonable.",
+      answer:
+        "Each account can register up to 10 subdomains. This limit helps ensure fair usage for all users.",
     },
     {
       question: "What happens if my target URL goes down?",
