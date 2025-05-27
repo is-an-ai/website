@@ -24,7 +24,7 @@ const BugReportButton = ({
       title="Report a bug"
       aria-label="Report a bug"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center">
         <svg
           className="w-4 h-4"
           fill="none"
