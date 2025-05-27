@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BugReportButton } from "@/components";
 
 interface DocSection {
   id: string;
@@ -519,6 +520,9 @@ const DocsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Bug Report Button */}
+      <BugReportButton />
     </div>
   );
 };

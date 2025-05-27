@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useAllSubdomains } from "@/hooks/api/useSubdomains";
 import { Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
+import { BugReportButton } from "@/components";
 
 interface Project {
   id: string;
@@ -213,6 +214,9 @@ const ExamplesPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Bug Report Button */}
+      <BugReportButton />
     </div>
   );
 };

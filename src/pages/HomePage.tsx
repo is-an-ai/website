@@ -3,6 +3,7 @@ import {
   HowItWorksSection,
   ExamplesSection,
   CommunityCTASection,
+  BugReportButton,
 } from "@/components";
 
 const HomePage = () => {
@@ -12,6 +13,7 @@ const HomePage = () => {
       <HowItWorksSection />
       <ExamplesSection />
       <CommunityCTASection />
+      <BugReportButton />
     </div>
   );
 };

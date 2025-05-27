@@ -7,7 +7,11 @@ import {
   useUpdateSubdomain,
   useDeleteSubdomain,
 } from "@/hooks/api/useSubdomains";
-import { CreateSubdomainModal, EditSubdomainModal } from "@/components";
+import {
+  CreateSubdomainModal,
+  EditSubdomainModal,
+  BugReportButton,
+} from "@/components";
 import Toast from "@/components/Toast";
 import { DOMAIN_SUFFIX, MAX_SUBDOMAINS_PER_USER } from "@/lib/constants";
 import {
@@ -387,6 +391,9 @@ const DashboardPage = () => {
         isVisible={toast.isVisible}
         onClose={hideToast}
       />
+
+      {/* Bug Report Button */}
+      <BugReportButton />
     </div>
   );
 };
