@@ -3,20 +3,20 @@ import ExampleCard from "./ExampleCard";
 
 const PREDEFINED_EXAMPLES = [
   {
+    subdomain: "beautyclip.is-an.ai",
+    description: "AI-powered cosmetic search engine",
+  },
+  {
     subdomain: "trax.is-an.ai",
-    description: "AI-powered analytics and tracking platform",
+    description: "Just like Figma, but for musicians",
   },
   {
     subdomain: "seo.is-an.ai",
-    description: "SEO optimization powered by artificial intelligence",
+    description: "Developer Seo's portfolio",
   },
   {
     subdomain: "chungjung.is-an.ai",
-    description: "Advanced AI research and development platform",
-  },
-  {
-    subdomain: "gabi.is-an.ai",
-    description: "Intelligent conversational AI assistant",
+    description: "Chungjung's personal blog",
   },
 ];
 
