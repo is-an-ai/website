@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { UpdateSubdomainRequest, DNSRecord, Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
+import { validateDNSRecords } from "@/lib/validation";
 
 interface EditSubdomainModalProps {
   isOpen: boolean;
@@ -12,10 +13,30 @@ interface EditSubdomainModalProps {
 }
 
 const DNS_RECORD_TYPES = [
-  { value: "A", label: "A Record", description: "IPv4 address" },
-  { value: "AAAA", label: "AAAA Record", description: "IPv6 address" },
-  { value: "CNAME", label: "CNAME Record", description: "Canonical name" },
-  { value: "TXT", label: "TXT Record", description: "Text record" },
+  {
+    value: "A",
+    label: "A Record",
+    description: "IPv4 address",
+    placeholder: "192.168.1.1",
+  },
+  {
+    value: "AAAA",
+    label: "AAAA Record",
+    description: "IPv6 address",
+    placeholder: "2001:db8::1",
+  },
+  {
+    value: "CNAME",
+    label: "CNAME Record",
+    description: "Canonical name",
+    placeholder: "example.com",
+  },
+  {
+    value: "TXT",
+    label: "TXT Record",
+    description: "Text record",
+    placeholder: "v=spf1 include:_spf.google.com ~all",
+  },
 ] as const;
 
 const EditSubdomainModal = ({
@@ -33,6 +54,7 @@ const EditSubdomainModal = ({
   const [records, setRecords] = useState<DNSRecord[]>([
     { type: "A", value: "" },
   ]);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Initialize form data when subdomain changes
   useEffect(() => {
@@ -73,6 +95,11 @@ const EditSubdomainModal = ({
       updatedRecords[index] = { ...updatedRecords[index], value };
     }
     setRecords(updatedRecords);
+
+    // Clear validation errors when user starts typing
+    if (validationErrors.length > 0) {
+      setValidationErrors([]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,6 +123,13 @@ const EditSubdomainModal = ({
       return; // Need at least one valid record
     }
 
+    // Client-side validation
+    const validation = validateDNSRecords(validRecords);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      return;
+    }
+
     const requestData: UpdateSubdomainRequest = {
       description: formData.description.trim(),
       record: validRecords,
@@ -103,6 +137,7 @@ const EditSubdomainModal = ({
 
     try {
       await onSubmit(requestData);
+      setValidationErrors([]);
       onClose();
     } catch (err) {
       console.error(err);
@@ -286,13 +321,9 @@ const EditSubdomainModal = ({
                           updateRecord(index, "value", e.target.value)
                         }
                         placeholder={
-                          record.type === "A"
-                            ? "192.168.1.1"
-                            : record.type === "AAAA"
-                            ? "2001:db8::1"
-                            : record.type === "CNAME"
-                            ? "example.com"
-                            : "Your text value"
+                          DNS_RECORD_TYPES.find(
+                            (type) => type.value === record.type
+                          )?.placeholder || "Enter value"
                         }
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
                         disabled={isLoading}
@@ -303,6 +334,37 @@ const EditSubdomainModal = ({
               ))}
             </div>
           </div>
+
+          {/* Validation Errors */}
+          {validationErrors.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <div className="flex items-start">
+                <svg
+                  className="w-4 h-4 text-amber-500 mr-2 mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <div className="flex-1">
+                  <h4 className="text-amber-800 text-sm font-medium mb-1">
+                    Please fix the following DNS record errors:
+                  </h4>
+                  <ul className="text-amber-700 text-sm space-y-1">
+                    {validationErrors.map((error, index) => (
+                      <li key={index} className="list-disc list-inside">
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (

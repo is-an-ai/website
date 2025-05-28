@@ -19,6 +19,7 @@ import {
   CreateSubdomainRequest,
   UpdateSubdomainRequest,
 } from "@/types/api";
+import { getErrorMessage } from "@/lib/validation";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ const DashboardPage = () => {
 
   // Check if user has reached subdomain limit
   const hasReachedLimit = subdomains.length >= MAX_SUBDOMAINS_PER_USER;
+  const isLegacyUser = subdomains.length > MAX_SUBDOMAINS_PER_USER;
 
   const handleCreateSubdomain = async (data: CreateSubdomainRequest) => {
     if (hasReachedLimit) {
@@ -83,8 +85,9 @@ const DashboardPage = () => {
       await createMutation.mutateAsync(data);
       showToast("Subdomain created successfully!");
       setShowCreateForm(false);
-    } catch {
-      showToast("Failed to create subdomain", "error");
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      showToast(errorMessage, "error");
     }
   };
 
@@ -99,8 +102,9 @@ const DashboardPage = () => {
       showToast("Subdomain updated successfully!");
       setShowEditForm(false);
       setEditingSubdomain(null);
-    } catch {
-      showToast("Failed to update subdomain", "error");
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      showToast(errorMessage, "error");
     }
   };
 
@@ -112,8 +116,9 @@ const DashboardPage = () => {
       showToast("Subdomain deleted successfully!");
       setShowDeleteConfirm(false);
       setDeletingSubdomain(null);
-    } catch {
-      showToast("Failed to delete subdomain", "error");
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      showToast(errorMessage, "error");
     }
   };
 
@@ -202,11 +207,27 @@ const DashboardPage = () => {
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                 />
               </svg>
-              <span className="text-amber-800 text-sm">
-                You have reached the maximum limit of {MAX_SUBDOMAINS_PER_USER}{" "}
-                subdomains per account. Delete an existing subdomain to create a
-                new one.
-              </span>
+              <div className="flex-1">
+                {isLegacyUser ? (
+                  <div>
+                    <span className="text-amber-800 text-sm font-medium block mb-1">
+                      Legacy Account Notice
+                    </span>
+                    <span className="text-amber-700 text-sm">
+                      You have {subdomains.length} subdomains from before our
+                      limit change. You can keep all existing subdomains, but
+                      new registrations are limited to {MAX_SUBDOMAINS_PER_USER}{" "}
+                      total. Delete some subdomains to create new ones.
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-amber-800 text-sm">
+                    You have reached the maximum limit of{" "}
+                    {MAX_SUBDOMAINS_PER_USER} subdomains per account. Delete an
+                    existing subdomain to create a new one.
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -219,8 +240,17 @@ const DashboardPage = () => {
                 Your Subdomains
               </h2>
               <p className="text-sm text-gray-600">
-                Manage your is-an.ai subdomains ({subdomains.length}/
-                {MAX_SUBDOMAINS_PER_USER})
+                {isLegacyUser ? (
+                  <>
+                    Manage your is-an.ai subdomains ({subdomains.length} total,
+                    limit: {MAX_SUBDOMAINS_PER_USER} for new accounts)
+                  </>
+                ) : (
+                  <>
+                    Manage your is-an.ai subdomains ({subdomains.length}/
+                    {MAX_SUBDOMAINS_PER_USER})
+                  </>
+                )}
               </p>
             </div>
             <button
