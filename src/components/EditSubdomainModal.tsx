@@ -144,15 +144,13 @@ const EditSubdomainModal = ({
     }
   };
 
-  const isFormValid =
-    formData.description.trim() &&
-    records.some((record) =>
-      typeof record.value === "string"
-        ? record.value.trim() !== ""
-        : Array.isArray(record.value)
-        ? record.value.length > 0
-        : true
-    );
+  const isFormValid = records.some((record) =>
+    typeof record.value === "string"
+      ? record.value.trim() !== ""
+      : Array.isArray(record.value)
+      ? record.value.length > 0
+      : true
+  );
 
   if (!isOpen || !subdomain) return null;
 
@@ -217,7 +215,7 @@ const EditSubdomainModal = ({
                   description: e.target.value,
                 }))
               }
-              placeholder="Describe your project (e.g., My awesome AI project)"
+              placeholder="Describe your project (optional)"
               rows={3}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
               disabled={isLoading}

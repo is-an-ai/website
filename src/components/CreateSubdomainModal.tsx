@@ -170,7 +170,6 @@ const CreateSubdomainModal = ({
   const hasCheckedAvailability = checkingName === formData.subdomainName.trim();
   const isFormValid =
     formData.subdomainName.trim() &&
-    formData.description.trim() &&
     records.some((record) =>
       typeof record.value === "string"
         ? record.value.trim() !== ""
@@ -311,7 +310,7 @@ const CreateSubdomainModal = ({
                   description: e.target.value,
                 }))
               }
-              placeholder="Brief description of your project"
+              placeholder="Brief description of your project (optional)"
               rows={3}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
               disabled={isLoading}
@@ -403,7 +402,7 @@ const CreateSubdomainModal = ({
                 >
                   <path
                     fillRule="evenodd"
-                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
                     clipRule="evenodd"
                   />
                 </svg>
