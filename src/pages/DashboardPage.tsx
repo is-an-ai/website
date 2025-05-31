@@ -131,6 +131,11 @@ const DashboardPage = () => {
     }
   };
 
+  const handleNavigateToDocs = (section?: string) => {
+    const docsPath = section ? `/docs#${section}` : "/docs";
+    navigate(docsPath);
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -360,6 +365,7 @@ const DashboardPage = () => {
         isOpen={showCreateForm && !hasReachedLimit}
         onClose={() => setShowCreateForm(false)}
         onSubmit={handleCreateSubdomain}
+        onNavigateToDocs={handleNavigateToDocs}
         isLoading={createMutation.isPending}
         error={createMutation.error?.message || null}
       />

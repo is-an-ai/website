@@ -18,6 +18,7 @@ export { default as ExampleCard } from "./ExampleCard";
 // Modal components
 export { default as CreateSubdomainModal } from "./CreateSubdomainModal";
 export { default as EditSubdomainModal } from "./EditSubdomainModal";
+export { default as PlatformGuidanceModal } from "./PlatformGuidanceModal";
 
 // Utility components
 export { default as BugReportButton } from "./BugReportButton";

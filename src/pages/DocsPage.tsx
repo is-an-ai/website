@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BugReportButton } from "@/components";
 
 interface DocSection {
@@ -110,6 +110,14 @@ const TroubleshootingSection = ({
 
 const DocsPage = () => {
   const [activeSection, setActiveSection] = useState("getting-started");
+
+  // Handle hash-based navigation
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // Remove the '#'
+    if (hash && sections.some((section) => section.id === hash)) {
+      setActiveSection(hash);
+    }
+  }, []);
 
   // Data configurations
   const howItWorksSteps: StepItem[] = [
