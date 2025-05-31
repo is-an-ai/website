@@ -26,11 +26,12 @@ export const detectPlatform = (
       platform: "Vercel",
       icon: "▲",
       iconBg: "bg-black",
-      message: "CNAME 설정 후 Vercel에서 커스텀 도메인을 추가해야 합니다",
+      message:
+        "After setting up the CNAME record, you need to add the custom domain in Vercel",
       steps: [
-        "Vercel 프로젝트 설정으로 이동",
-        "Domains 탭 클릭",
-        "등록한 서브도메인 추가",
+        "Go to your Vercel project settings",
+        "Click on the Domains tab",
+        "Add your registered subdomain",
       ],
       docsSection: "examples",
     };
@@ -42,11 +43,11 @@ export const detectPlatform = (
       icon: "☁",
       iconBg: "bg-orange-500",
       message:
-        "CNAME 설정 후 Cloudflare Pages에서 커스텀 도메인을 추가해야 합니다",
+        "After setting up the CNAME record, you need to add the custom domain in Cloudflare Pages",
       steps: [
-        "Cloudflare Pages 대시보드로 이동",
-        "해당 프로젝트 선택",
-        "Custom domains에서 서브도메인 추가",
+        "Go to your Cloudflare Pages dashboard",
+        "Select your project",
+        "Add your subdomain in Custom domains",
       ],
       docsSection: "examples",
     };
@@ -57,11 +58,12 @@ export const detectPlatform = (
       platform: "GitHub Pages",
       icon: "⚡",
       iconBg: "bg-gray-900",
-      message: "CNAME 설정 후 GitHub Pages에서 커스텀 도메인을 추가해야 합니다",
+      message:
+        "After setting up the CNAME record, you need to add the custom domain in GitHub Pages",
       steps: [
-        "GitHub 저장소 Settings로 이동",
-        "Pages 섹션 찾기",
-        "Custom domain에 서브도메인 추가",
+        "Go to your GitHub repository Settings",
+        "Find the Pages section",
+        "Add your subdomain to Custom domain",
       ],
       docsSection: "examples",
     };
@@ -72,11 +74,12 @@ export const detectPlatform = (
       platform: "Netlify",
       icon: "N",
       iconBg: "bg-teal-500",
-      message: "CNAME 설정 후 Netlify에서 커스텀 도메인을 추가해야 합니다",
+      message:
+        "After setting up the CNAME record, you need to add the custom domain in Netlify",
       steps: [
-        "Netlify 사이트 설정으로 이동",
-        "Domain management 섹션 찾기",
-        "Add custom domain으로 서브도메인 추가",
+        "Go to your Netlify site settings",
+        "Find the Domain management section",
+        "Add your subdomain with Add custom domain",
       ],
       docsSection: "examples",
     };

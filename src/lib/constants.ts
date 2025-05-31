@@ -1,6 +1,5 @@
 // API Configuration
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://api.is-an.ai";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 // GitHub Configuration
 export const GITHUB_REPOSITORY_URL = "https://github.com/is-an-ai";

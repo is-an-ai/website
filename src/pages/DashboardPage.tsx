@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NiceModal from "@ebay/nice-modal-react";
 import { useAuth } from "@/hooks/api/useAuth";
 import {
   useMySubdomains,
@@ -32,12 +33,7 @@ const DashboardPage = () => {
   const deleteMutation = useDeleteSubdomain();
 
   // Local state
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [editingSubdomain, setEditingSubdomain] = useState<Subdomain | null>(
-    null
-  );
   const [deletingSubdomain, setDeletingSubdomain] = useState<Subdomain | null>(
     null
   );
@@ -84,27 +80,27 @@ const DashboardPage = () => {
     try {
       await createMutation.mutateAsync(data);
       showToast("Subdomain created successfully!");
-      setShowCreateForm(false);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       showToast(errorMessage, "error");
+      throw error; // Re-throw so modal can handle it
     }
   };
 
-  const handleUpdateSubdomain = async (data: UpdateSubdomainRequest) => {
-    if (!editingSubdomain) return;
-
+  const handleUpdateSubdomain = async (
+    data: UpdateSubdomainRequest,
+    subdomainName: string
+  ) => {
     try {
       await updateMutation.mutateAsync({
-        name: editingSubdomain.subdomainName,
+        name: subdomainName,
         data,
       });
       showToast("Subdomain updated successfully!");
-      setShowEditForm(false);
-      setEditingSubdomain(null);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       showToast(errorMessage, "error");
+      throw error; // Re-throw so modal can handle it
     }
   };
 
@@ -134,6 +130,34 @@ const DashboardPage = () => {
   const handleNavigateToDocs = (section?: string) => {
     const docsPath = section ? `/docs#${section}` : "/docs";
     navigate(docsPath);
+  };
+
+  const showCreateModal = () => {
+    if (hasReachedLimit) {
+      showToast(
+        `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
+        "error"
+      );
+      return;
+    }
+
+    NiceModal.show(CreateSubdomainModal, {
+      onSubmit: handleCreateSubdomain,
+      onNavigateToDocs: handleNavigateToDocs,
+      isLoading: createMutation.isPending,
+      error: createMutation.error?.message || null,
+    });
+  };
+
+  const showEditModal = (subdomain: Subdomain) => {
+    NiceModal.show(EditSubdomainModal, {
+      onSubmit: (data: UpdateSubdomainRequest) =>
+        handleUpdateSubdomain(data, subdomain.subdomainName),
+      onNavigateToDocs: handleNavigateToDocs,
+      subdomain,
+      isLoading: updateMutation.isPending,
+      error: updateMutation.error?.message || null,
+    });
   };
 
   if (authLoading) {
@@ -259,7 +283,7 @@ const DashboardPage = () => {
               </p>
             </div>
             <button
-              onClick={() => setShowCreateForm(true)}
+              onClick={showCreateModal}
               disabled={hasReachedLimit}
               className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               title={
@@ -282,7 +306,7 @@ const DashboardPage = () => {
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">No subdomains yet</p>
               <button
-                onClick={() => setShowCreateForm(true)}
+                onClick={showCreateModal}
                 className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
               >
                 Create your first subdomain
@@ -290,7 +314,7 @@ const DashboardPage = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {subdomains.map((subdomain) => (
+              {subdomains.map((subdomain: Subdomain) => (
                 <div
                   key={subdomain.subdomainId}
                   className="border border-gray-200 rounded-lg p-4"
@@ -334,10 +358,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => {
-                          setEditingSubdomain(subdomain);
-                          setShowEditForm(true);
-                        }}
+                        onClick={() => showEditModal(subdomain)}
                         className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
                       >
                         Edit
@@ -361,27 +382,6 @@ const DashboardPage = () => {
       </main>
 
       {/* Modals */}
-      <CreateSubdomainModal
-        isOpen={showCreateForm && !hasReachedLimit}
-        onClose={() => setShowCreateForm(false)}
-        onSubmit={handleCreateSubdomain}
-        onNavigateToDocs={handleNavigateToDocs}
-        isLoading={createMutation.isPending}
-        error={createMutation.error?.message || null}
-      />
-
-      <EditSubdomainModal
-        isOpen={showEditForm}
-        onClose={() => {
-          setShowEditForm(false);
-          setEditingSubdomain(null);
-        }}
-        onSubmit={handleUpdateSubdomain}
-        subdomain={editingSubdomain}
-        isLoading={updateMutation.isPending}
-        error={updateMutation.error?.message || null}
-      />
-
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

@@ -1,18 +1,13 @@
 import { useState, useCallback } from "react";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { CreateSubdomainRequest, DNSRecord } from "@/types/api";
 import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 import { validateDNSRecords } from "@/lib/validation";
-import {
-  detectPlatform,
-  hasCnameRecord,
-  PlatformGuidance,
-} from "@/lib/platformDetection";
+import { detectPlatform, hasCnameRecord } from "@/lib/platformDetection";
 import PlatformGuidanceModal from "./PlatformGuidanceModal";
 
 interface CreateSubdomainModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   onSubmit: (data: CreateSubdomainRequest) => Promise<void>;
   onNavigateToDocs?: (section?: string) => void;
   isLoading: boolean;
@@ -46,192 +41,173 @@ const DNS_RECORD_TYPES = [
   },
 ] as const;
 
-const CreateSubdomainModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  onNavigateToDocs,
-  isLoading,
-  error,
-}: CreateSubdomainModalProps) => {
-  const [formData, setFormData] = useState({
-    subdomainName: "",
-    description: "",
-  });
+const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
+  ({ onSubmit, onNavigateToDocs, isLoading, error }) => {
+    const modal = useModal();
 
-  const [records, setRecords] = useState<DNSRecord[]>([
-    { type: "A", value: "" },
-  ]);
-
-  const [checkingName, setCheckingName] = useState("");
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [platformGuidance, setPlatformGuidance] =
-    useState<PlatformGuidance | null>(null);
-  const [showPlatformModal, setShowPlatformModal] = useState(false);
-
-  // Use React Query for availability checking
-  const {
-    data: availabilityResult,
-    isLoading: isCheckingAvailability,
-    error: availabilityError,
-  } = useSubdomainAvailability(checkingName);
-
-  const handleSubdomainNameChange = useCallback((value: string) => {
-    setFormData((prev) => ({ ...prev, subdomainName: value }));
-  }, []);
-
-  const handleCheckAvailability = useCallback(() => {
-    if (!formData.subdomainName.trim()) return;
-    setCheckingName(formData.subdomainName.trim());
-  }, [formData.subdomainName]);
-
-  const addRecord = () => {
-    setRecords([...records, { type: "A", value: "" }]);
-  };
-
-  const removeRecord = (index: number) => {
-    if (records.length > 1) {
-      setRecords(records.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateRecord = (
-    index: number,
-    field: keyof DNSRecord,
-    value: string
-  ) => {
-    const updatedRecords = [...records];
-    if (field === "type") {
-      updatedRecords[index] = {
-        ...updatedRecords[index],
-        type: value as DNSRecord["type"],
-      };
-    } else {
-      updatedRecords[index] = { ...updatedRecords[index], value };
-    }
-    setRecords(updatedRecords);
-
-    // Clear validation errors when user starts typing
-    if (validationErrors.length > 0) {
-      setValidationErrors([]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const hasCheckedAvailability =
-      checkingName === formData.subdomainName.trim();
-
-    if (!hasCheckedAvailability) {
-      return; // Force availability check first
-    }
-
-    if (!availabilityResult) {
-      return; // Can't submit if not available
-    }
-
-    // Filter out empty records and trim values
-    const validRecords = records
-      .filter((record) => {
-        if (typeof record.value === "string") {
-          return record.value.trim() !== "";
-        }
-        return Array.isArray(record.value) ? record.value.length > 0 : true;
-      })
-      .map((record) => ({
-        ...record,
-        value:
-          typeof record.value === "string" ? record.value.trim() : record.value,
-      }));
-
-    if (validRecords.length === 0) {
-      return; // Need at least one valid record
-    }
-
-    // Client-side validation
-    const validation = validateDNSRecords(validRecords);
-    if (!validation.isValid) {
-      setValidationErrors(validation.errors);
-      return;
-    }
-
-    const requestData: CreateSubdomainRequest = {
-      subdomainName: formData.subdomainName.trim(),
-      description: formData.description.trim(),
-      record: validRecords,
-    };
-
-    try {
-      await onSubmit(requestData);
-
-      // Check for platform guidance after successful submission
-      if (hasCnameRecord(validRecords)) {
-        const cnameRecord = validRecords.find(
-          (record) => record.type === "CNAME"
-        );
-        if (cnameRecord && typeof cnameRecord.value === "string") {
-          const guidance = detectPlatform(cnameRecord.value);
-          if (guidance) {
-            setPlatformGuidance(guidance);
-            setShowPlatformModal(true);
-            // Don't close the main modal yet - let user see the guidance first
-            return;
-          }
-        }
-      }
-
-      // Reset form on success (only if no platform guidance to show)
-      resetForm();
-      onClose();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
+    const [formData, setFormData] = useState({
       subdomainName: "",
       description: "",
     });
-    setRecords([{ type: "A", value: "" }]);
-    setCheckingName("");
-    setValidationErrors([]);
-    setPlatformGuidance(null);
-  };
 
-  const handlePlatformModalClose = () => {
-    setShowPlatformModal(false);
-    resetForm();
-    onClose();
-  };
+    const [records, setRecords] = useState<DNSRecord[]>([
+      { type: "A", value: "" },
+    ]);
 
-  const handleViewDocs = () => {
-    setShowPlatformModal(false);
-    if (onNavigateToDocs && platformGuidance) {
-      onNavigateToDocs(platformGuidance.docsSection);
-    }
-    resetForm();
-    onClose();
-  };
+    const [checkingName, setCheckingName] = useState("");
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const hasCheckedAvailability = checkingName === formData.subdomainName.trim();
-  const isFormValid =
-    formData.subdomainName.trim() &&
-    records.some((record) =>
-      typeof record.value === "string"
-        ? record.value.trim() !== ""
-        : Array.isArray(record.value)
-        ? record.value.length > 0
-        : true
-    ) &&
-    hasCheckedAvailability &&
-    availabilityResult === true;
+    // Use React Query for availability checking
+    const {
+      data: availabilityResult,
+      isLoading: isCheckingAvailability,
+      error: availabilityError,
+    } = useSubdomainAvailability(checkingName);
 
-  if (!isOpen) return null;
+    const handleSubdomainNameChange = useCallback((value: string) => {
+      setFormData((prev) => ({ ...prev, subdomainName: value }));
+    }, []);
 
-  return (
-    <>
+    const handleCheckAvailability = useCallback(() => {
+      if (!formData.subdomainName.trim()) return;
+      setCheckingName(formData.subdomainName.trim());
+    }, [formData.subdomainName]);
+
+    const addRecord = () => {
+      setRecords([...records, { type: "A", value: "" }]);
+    };
+
+    const removeRecord = (index: number) => {
+      if (records.length > 1) {
+        setRecords(records.filter((_, i) => i !== index));
+      }
+    };
+
+    const updateRecord = (
+      index: number,
+      field: keyof DNSRecord,
+      value: string
+    ) => {
+      const updatedRecords = [...records];
+      if (field === "type") {
+        updatedRecords[index] = {
+          ...updatedRecords[index],
+          type: value as DNSRecord["type"],
+        };
+      } else {
+        updatedRecords[index] = { ...updatedRecords[index], value };
+      }
+      setRecords(updatedRecords);
+
+      // Clear validation errors when user starts typing
+      if (validationErrors.length > 0) {
+        setValidationErrors([]);
+      }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const hasCheckedAvailability =
+        checkingName === formData.subdomainName.trim();
+
+      if (!hasCheckedAvailability) {
+        return; // Force availability check first
+      }
+
+      if (!availabilityResult) {
+        return; // Can't submit if not available
+      }
+
+      // Filter out empty records and trim values
+      const validRecords = records
+        .filter((record) => {
+          if (typeof record.value === "string") {
+            return record.value.trim() !== "";
+          }
+          return Array.isArray(record.value) ? record.value.length > 0 : true;
+        })
+        .map((record) => ({
+          ...record,
+          value:
+            typeof record.value === "string"
+              ? record.value.trim()
+              : record.value,
+        }));
+
+      if (validRecords.length === 0) {
+        return; // Need at least one valid record
+      }
+
+      // Client-side validation
+      const validation = validateDNSRecords(validRecords);
+      if (!validation.isValid) {
+        setValidationErrors(validation.errors);
+        return;
+      }
+
+      const requestData: CreateSubdomainRequest = {
+        subdomainName: formData.subdomainName.trim(),
+        description: formData.description.trim(),
+        record: validRecords,
+      };
+
+      try {
+        await onSubmit(requestData);
+
+        // Check for platform guidance after successful submission
+        if (hasCnameRecord(validRecords)) {
+          const cnameRecord = validRecords.find(
+            (record) => record.type === "CNAME"
+          );
+          if (cnameRecord && typeof cnameRecord.value === "string") {
+            const guidance = detectPlatform(cnameRecord.value);
+            if (guidance) {
+              // Show platform guidance modal
+              NiceModal.show(PlatformGuidanceModal, {
+                guidance,
+                subdomainName: formData.subdomainName,
+                onViewDocs: onNavigateToDocs
+                  ? () => onNavigateToDocs(guidance.docsSection)
+                  : undefined,
+              });
+            }
+          }
+        }
+
+        // Reset form and close modal
+        resetForm();
+        modal.remove();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const resetForm = () => {
+      setFormData({
+        subdomainName: "",
+        description: "",
+      });
+      setRecords([{ type: "A", value: "" }]);
+      setCheckingName("");
+      setValidationErrors([]);
+    };
+
+    const hasCheckedAvailability =
+      checkingName === formData.subdomainName.trim();
+    const isFormValid =
+      formData.subdomainName.trim() &&
+      records.some((record) =>
+        typeof record.value === "string"
+          ? record.value.trim() !== ""
+          : Array.isArray(record.value)
+          ? record.value.length > 0
+          : true
+      ) &&
+      hasCheckedAvailability &&
+      availabilityResult === true;
+
+    return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
@@ -239,7 +215,7 @@ const CreateSubdomainModal = ({
               Create Subdomain
             </h3>
             <button
-              onClick={onClose}
+              onClick={modal.remove}
               className="text-gray-400 hover:text-gray-600 transition-colors"
               disabled={isLoading}
             >
@@ -503,7 +479,7 @@ const CreateSubdomainModal = ({
             <div className="flex gap-3 pt-4">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={modal.remove}
                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
                 disabled={isLoading}
               >
@@ -527,19 +503,8 @@ const CreateSubdomainModal = ({
           </form>
         </div>
       </div>
-
-      {/* Platform Guidance Modal */}
-      {platformGuidance && (
-        <PlatformGuidanceModal
-          isOpen={showPlatformModal}
-          onClose={handlePlatformModalClose}
-          onViewDocs={handleViewDocs}
-          guidance={platformGuidance}
-          subdomainName={formData.subdomainName}
-        />
-      )}
-    </>
-  );
-};
+    );
+  }
+);
 
 export default CreateSubdomainModal;
