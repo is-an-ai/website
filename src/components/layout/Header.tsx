@@ -52,6 +52,12 @@ const Header = () => {
             >
               examples
             </Link>
+            <Link
+              to="/blog"
+              className="text-gray-600 hover:text-gray-900 transition-colors font-mono"
+            >
+              blog
+            </Link>
             <a
               href={GITHUB_REPOSITORY_URL}
               target="_blank"
@@ -133,6 +139,13 @@ const Header = () => {
                 className="block px-3 py-2 text-base font-mono text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
               >
                 examples
+              </Link>
+              <Link
+                to="/blog"
+                onClick={closeMobileMenu}
+                className="block px-3 py-2 text-base font-mono text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                blog
               </Link>
               <a
                 href={GITHUB_REPOSITORY_URL}
