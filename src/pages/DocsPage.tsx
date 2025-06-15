@@ -184,22 +184,22 @@ const DocsPage = () => {
     {
       name: "Vercel",
       icon: "▲",
-      iconBg: "bg-black",
+      iconBg: "bg-red-500",
       steps: [
         {
-          title: "1. Deploy your project to Vercel",
-          code: "Your app URL: https://my-project.vercel.app",
+          title: "❌ Not Currently Supported",
+          code: "Vercel requires PSL (Public Suffix List) enlisted domains",
         },
         {
-          title: "2. Register subdomain on is-an.ai with CNAME",
-          code: "Subdomain: my-project.is-an.ai → cname.vercel-dns.com (CNAME)",
+          title: "Why it doesn't work:",
+          code: "is-an.ai is not in the PSL, so Vercel cannot issue SSL certificates",
         },
         {
-          title: "3. Add custom domain in Vercel",
-          code: "Project Settings → Domains → Add: my-project.is-an.ai",
+          title: "Alternative:",
+          code: "Use other platforms like Cloudflare Pages, Netlify, or GitHub Pages",
         },
       ],
-      note: "Works with any Vercel deployment",
+      note: "⚠️ Currently unsupported due to PSL requirements",
     },
     {
       name: "Cloudflare Pages",
@@ -442,6 +442,23 @@ const DocsPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">
             Deploy with Popular Platforms
           </h2>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+            <h3 className="font-semibold text-amber-900 mb-3">
+              ⚠️ Important: PSL Limitations
+            </h3>
+            <p className="text-amber-800 text-sm mb-3">
+              Some platforms require domains to be listed in the{" "}
+              <strong>Public Suffix List (PSL)</strong> to issue SSL
+              certificates or provide custom domain features.
+            </p>
+            <p className="text-amber-800 text-sm">
+              <strong>is-an.ai</strong> is not currently in the PSL, which means
+              platforms like <strong>Vercel</strong> cannot be used with our
+              subdomains. We're working on PSL enrollment, but for now, please
+              use the supported platforms below.
+            </p>
+          </div>
 
           <div className="space-y-6">
             {platforms.map((platform) => (

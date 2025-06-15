@@ -1,5 +1,6 @@
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { PlatformGuidance } from "@/lib/platformDetection";
+import { PSL_WARNINGS } from "@/lib/pslWarnings";
 
 interface PlatformGuidanceModalProps {
   guidance: PlatformGuidance;
@@ -53,10 +54,20 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
           </div>
 
           <div className="space-y-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div
+              className={`${
+                guidance.platform === "Vercel"
+                  ? "bg-red-50 border border-red-200"
+                  : "bg-amber-50 border border-amber-200"
+              } rounded-lg p-4`}
+            >
               <div className="flex items-start">
                 <svg
-                  className="w-5 h-5 text-amber-500 mr-2 mt-0.5 flex-shrink-0"
+                  className={`w-5 h-5 ${
+                    guidance.platform === "Vercel"
+                      ? "text-red-500"
+                      : "text-amber-500"
+                  } mr-2 mt-0.5 flex-shrink-0`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -67,10 +78,26 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
                   />
                 </svg>
                 <div>
-                  <h4 className="text-amber-800 font-medium mb-1">
-                    Additional setup required
+                  <h4
+                    className={`${
+                      guidance.platform === "Vercel"
+                        ? "text-red-800"
+                        : "text-amber-800"
+                    } font-medium mb-1`}
+                  >
+                    {guidance.platform === "Vercel"
+                      ? PSL_WARNINGS.UNSUPPORTED_PLATFORM
+                      : PSL_WARNINGS.ADDITIONAL_SETUP_REQUIRED}
                   </h4>
-                  <p className="text-amber-700 text-sm">{guidance.message}</p>
+                  <p
+                    className={`${
+                      guidance.platform === "Vercel"
+                        ? "text-red-700"
+                        : "text-amber-700"
+                    } text-sm`}
+                  >
+                    {guidance.message}
+                  </p>
                 </div>
               </div>
             </div>
@@ -112,14 +139,22 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
                 onClick={() => modal.remove()}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
               >
-                Got it
+                {guidance.platform === "Vercel"
+                  ? PSL_WARNINGS.CONFIRM
+                  : PSL_WARNINGS.GOT_IT}
               </button>
               {onViewDocs && (
                 <button
                   onClick={handleViewDocs}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  className={`flex-1 px-4 py-2 ${
+                    guidance.platform === "Vercel"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  } text-white rounded-lg transition-colors text-sm font-medium`}
                 >
-                  View detailed guide
+                  {guidance.platform === "Vercel"
+                    ? PSL_WARNINGS.VIEW_SUPPORTED_PLATFORMS
+                    : PSL_WARNINGS.VIEW_DETAILED_GUIDE}
                 </button>
               )}
             </div>

@@ -4,8 +4,14 @@ import { CreateSubdomainRequest, DNSRecord } from "@/types/api";
 import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 import { validateDNSRecords } from "@/lib/validation";
-import { detectPlatform, hasCnameRecord } from "@/lib/platformDetection";
+import {
+  detectPlatform,
+  hasCnameRecord,
+  isVercelTarget,
+} from "@/lib/platformDetection";
 import PlatformGuidanceModal from "./PlatformGuidanceModal";
+import { PSL_WARNINGS } from "@/lib/pslWarnings";
+import PSLWarning from "./PSLWarning";
 
 interface CreateSubdomainModalProps {
   onSubmit: (data: CreateSubdomainRequest) => Promise<void>;
@@ -56,6 +62,10 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
 
     const [checkingName, setCheckingName] = useState("");
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [subdomainNameError, setSubdomainNameError] = useState<string | null>(
+      null
+    );
+    const [vercelWarning, setVercelWarning] = useState<string | null>(null);
 
     // Use React Query for availability checking
     const {
@@ -66,10 +76,28 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
 
     const handleSubdomainNameChange = useCallback((value: string) => {
       setFormData((prev) => ({ ...prev, subdomainName: value }));
+
+      // Validate subdomain name format
+      if (value.trim() && value.trim().startsWith("_")) {
+        setSubdomainNameError(
+          "Subdomain names cannot start with underscore (_)"
+        );
+      } else {
+        setSubdomainNameError(null);
+      }
     }, []);
 
     const handleCheckAvailability = useCallback(() => {
       if (!formData.subdomainName.trim()) return;
+
+      // Check for underscore prefix before making API call
+      if (formData.subdomainName.trim().startsWith("_")) {
+        setSubdomainNameError(
+          "Subdomain names cannot start with underscore (_)"
+        );
+        return;
+      }
+
       setCheckingName(formData.subdomainName.trim());
     }, [formData.subdomainName]);
 
@@ -96,6 +124,19 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
         };
       } else {
         updatedRecords[index] = { ...updatedRecords[index], value };
+
+        // Check for Vercel URL and show warning
+        if (
+          field === "value" &&
+          updatedRecords[index].type === "CNAME" &&
+          value.trim()
+        ) {
+          if (isVercelTarget(value)) {
+            setVercelWarning(PSL_WARNINGS.VERCEL_NOT_SUPPORTED);
+          } else {
+            setVercelWarning(null);
+          }
+        }
       }
       setRecords(updatedRecords);
 
@@ -107,6 +148,14 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+
+      // Check for underscore prefix
+      if (formData.subdomainName.trim().startsWith("_")) {
+        setSubdomainNameError(
+          "Subdomain names cannot start with underscore (_)"
+        );
+        return;
+      }
 
       const hasCheckedAvailability =
         checkingName === formData.subdomainName.trim();
@@ -191,12 +240,14 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
       setRecords([{ type: "A", value: "" }]);
       setCheckingName("");
       setValidationErrors([]);
+      setSubdomainNameError(null);
     };
 
     const hasCheckedAvailability =
       checkingName === formData.subdomainName.trim();
     const isFormValid =
       formData.subdomainName.trim() &&
+      !subdomainNameError &&
       records.some((record) =>
         typeof record.value === "string"
           ? record.value.trim() !== ""
@@ -322,6 +373,26 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                       Error checking availability
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Subdomain Name Validation Error */}
+              {subdomainNameError && (
+                <div className="mt-2">
+                  <div className="flex items-center text-red-600 text-sm">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {subdomainNameError}
+                  </div>
                 </div>
               )}
             </div>
@@ -452,6 +523,9 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 </div>
               </div>
             )}
+
+            {/* Vercel Warning */}
+            {vercelWarning && <PSLWarning message={vercelWarning} />}
 
             {/* Error Display */}
             {error && (

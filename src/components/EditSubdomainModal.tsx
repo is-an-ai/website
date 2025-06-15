@@ -3,8 +3,14 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { UpdateSubdomainRequest, DNSRecord, Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 import { validateDNSRecords } from "@/lib/validation";
-import { detectPlatform, hasCnameRecord } from "@/lib/platformDetection";
+import {
+  detectPlatform,
+  hasCnameRecord,
+  isVercelTarget,
+} from "@/lib/platformDetection";
 import PlatformGuidanceModal from "./PlatformGuidanceModal";
+import { PSL_WARNINGS } from "@/lib/pslWarnings";
+import PSLWarning from "./PSLWarning";
 
 interface EditSubdomainModalProps {
   onSubmit: (data: UpdateSubdomainRequest) => Promise<void>;
@@ -53,6 +59,10 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
       { type: "A", value: "" },
     ]);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [subdomainNameError, setSubdomainNameError] = useState<string | null>(
+      null
+    );
+    const [vercelWarning, setVercelWarning] = useState<string | null>(null);
 
     // Initialize form data when subdomain changes
     useEffect(() => {
@@ -65,6 +75,15 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
             ? [...subdomain.record]
             : [{ type: "A", value: "" }]
         );
+
+        // Check if subdomain name starts with underscore
+        if (subdomain.subdomainName.startsWith("_")) {
+          setSubdomainNameError(
+            "This subdomain starts with underscore (_) which is not allowed"
+          );
+        } else {
+          setSubdomainNameError(null);
+        }
       }
     }, [subdomain]);
 
@@ -91,6 +110,19 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
         };
       } else {
         updatedRecords[index] = { ...updatedRecords[index], value };
+
+        // Check for Vercel URL and show warning
+        if (
+          field === "value" &&
+          updatedRecords[index].type === "CNAME" &&
+          value.trim()
+        ) {
+          if (isVercelTarget(value)) {
+            setVercelWarning(PSL_WARNINGS.VERCEL_NOT_SUPPORTED);
+          } else {
+            setVercelWarning(null);
+          }
+        }
       }
       setRecords(updatedRecords);
 
@@ -102,6 +134,14 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+
+      // Check for underscore prefix
+      if (subdomain.subdomainName.startsWith("_")) {
+        setSubdomainNameError(
+          "Subdomain names cannot start with underscore (_)"
+        );
+        return;
+      }
 
       // Filter out empty records and trim values
       const validRecords = records
@@ -166,13 +206,15 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
       }
     };
 
-    const isFormValid = records.some((record) =>
-      typeof record.value === "string"
-        ? record.value.trim() !== ""
-        : Array.isArray(record.value)
-        ? record.value.length > 0
-        : true
-    );
+    const isFormValid =
+      !subdomainNameError &&
+      records.some((record) =>
+        typeof record.value === "string"
+          ? record.value.trim() !== ""
+          : Array.isArray(record.value)
+          ? record.value.length > 0
+          : true
+      );
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -220,6 +262,25 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
               <p className="mt-1 text-xs text-gray-500">
                 Subdomain name cannot be changed after creation
               </p>
+              {/* Subdomain Name Validation Error */}
+              {subdomainNameError && (
+                <div className="mt-2">
+                  <div className="flex items-center text-red-600 text-sm">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {subdomainNameError}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Description */}
@@ -348,6 +409,9 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                 </div>
               </div>
             )}
+
+            {/* Vercel Warning */}
+            {vercelWarning && <PSLWarning message={vercelWarning} />}
 
             {/* Error Display */}
             {error && (

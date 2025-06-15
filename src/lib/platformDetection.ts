@@ -1,11 +1,12 @@
 import { DNSRecord } from "@/types/api";
+import { PSL_GUIDANCE_MESSAGES } from "./pslWarnings";
 
 export interface PlatformGuidance {
   platform: string;
   icon: string;
   iconBg: string;
   message: string;
-  steps: string[];
+  steps: readonly string[];
   docsSection: string;
 }
 
@@ -16,6 +17,12 @@ const PLATFORM_PATTERNS = {
   netlify: /^.+\.netlify\.app$/i,
 } as const;
 
+// Function to check if a URL points to Vercel (for PSL warning)
+export const isVercelTarget = (target: string): boolean => {
+  const cleanTarget = target.trim().toLowerCase();
+  return PLATFORM_PATTERNS.vercel.test(cleanTarget);
+};
+
 export const detectPlatform = (
   cnameTarget: string
 ): PlatformGuidance | null => {
@@ -25,14 +32,9 @@ export const detectPlatform = (
     return {
       platform: "Vercel",
       icon: "▲",
-      iconBg: "bg-black",
-      message:
-        "After setting up the CNAME record, you need to add the custom domain in Vercel",
-      steps: [
-        "Go to your Vercel project settings",
-        "Click on the Domains tab",
-        "Add your registered subdomain",
-      ],
+      iconBg: "bg-red-500",
+      message: PSL_GUIDANCE_MESSAGES.VERCEL_NOT_SUPPORTED,
+      steps: PSL_GUIDANCE_MESSAGES.VERCEL_STEPS,
       docsSection: "examples",
     };
   }

@@ -22,7 +22,7 @@ const BLOG_POSTS_DATA = {
     title: "Getting Started with is-an.ai",
     description:
       "Learn how to register your first AI project subdomain with is-an.ai in just a few clicks",
-    date: "2024-01-15",
+    date: "2025-05-31",
     author: "is-an.ai Team",
     tags: ["tutorial", "getting-started", "subdomain"],
     content: `# Getting Started with is-an.ai
@@ -81,32 +81,6 @@ We handle all the technical details:
 - Explain your AI model/approach
 - Provide usage instructions
 
-## Common Use Cases
-
-### Research Projects
-Perfect for sharing academic research, papers, and demos:
-\`\`\`
-neural-style-transfer.is-an.ai
-sentiment-analysis.is-an.ai
-computer-vision-demo.is-an.ai
-\`\`\`
-
-### AI Startups
-Great for MVP demos and prototype showcases:
-\`\`\`
-ai-writing-assistant.is-an.ai
-smart-recommendation.is-an.ai
-voice-ai-bot.is-an.ai
-\`\`\`
-
-### Learning Projects
-Ideal for portfolio and educational content:
-\`\`\`
-my-first-ml-model.is-an.ai
-tensorflow-tutorial.is-an.ai
-ai-learning-journey.is-an.ai
-\`\`\`
-
 ## Technical Details
 
 ### DNS Management
@@ -129,7 +103,6 @@ Need help? We're here for you:
 
 - **Documentation**: Check our comprehensive guides
 - **Community**: Join our Discord community
-- **Email**: Contact support@is-an.ai
 - **GitHub**: Open an issue in our repository
 
 ## Next Steps
@@ -140,10 +113,7 @@ Ready to get started? Here's what to do next:
 2. **Choose a subdomain**: Pick a memorable name
 3. **Register**: Use our simple registration form
 4. **Deploy**: Upload your project and go live!
-
----
-
-*This post was last updated on January 15, 2024. Have questions or suggestions? Let us know!*`,
+`,
   },
 };
 
