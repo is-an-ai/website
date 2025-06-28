@@ -25,16 +25,25 @@ const Footer = () => {
 
         <div className="mt-6 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center text-xs font-mono text-gray-500">
           <p>Open source. MIT licensed.</p>
-          <p className="mt-2 md:mt-0">
-            Inspired by{" "}
+          <div className="flex items-center gap-4">
             <a
-              href="https://is-a.dev"
+              href="mailto:security@is-an.ai"
               className="underline hover:no-underline"
               target="_blank"
             >
-              is-a.dev
+              Report Abuse
             </a>
-          </p>
+            <p className="mt-2 md:mt-0">
+              Inspired by{" "}
+              <a
+                href="https://is-a.dev"
+                className="underline hover:no-underline"
+                target="_blank"
+              >
+                is-a.dev
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
