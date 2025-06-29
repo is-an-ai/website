@@ -39,20 +39,6 @@ const ExamplesPage = () => {
     return subdomains.map(transformSubdomainToProject);
   }, [subdomains]);
 
-  const getStatusBadge = (isLive: boolean) => {
-    return isLive ? (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-        <div className="w-2 h-2 bg-green-400 rounded-full mr-1"></div>
-        Live
-      </span>
-    ) : (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-        <div className="w-2 h-2 bg-gray-400 rounded-full mr-1"></div>
-        Coming Soon
-      </span>
-    );
-  };
-
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
