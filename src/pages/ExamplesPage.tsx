@@ -111,18 +111,12 @@ const ExamplesPage = () => {
 
         {/* Stats */}
         {!isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 gap-6 mb-12 max-w-2xl mx-auto">
             <div className="bg-white rounded-lg border p-6 text-center">
               <div className="text-3xl font-bold text-gray-900 font-mono">
                 {projects.length}
               </div>
               <div className="text-sm text-gray-600 mt-1">Total Projects</div>
-            </div>
-            <div className="bg-white rounded-lg border p-6 text-center">
-              <div className="text-3xl font-bold text-green-600 font-mono">
-                {projects.filter((p) => p.isLive).length}
-              </div>
-              <div className="text-sm text-gray-600 mt-1">Live & Running</div>
             </div>
           </div>
         )}
@@ -140,7 +134,7 @@ const ExamplesPage = () => {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {project.name}
                     </h3>
-                    {getStatusBadge(project.isLive)}
+                    {/* {getStatusBadge(project.isLive)} */}
                   </div>
 
                   <div className="mb-3">
