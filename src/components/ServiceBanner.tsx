@@ -1,5 +1,5 @@
 import React from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { CheckCircle, X } from "lucide-react";
 
 interface ServiceBannerProps {
   onClose?: () => void;
@@ -13,24 +13,15 @@ const ServiceBanner: React.FC<ServiceBannerProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
+    <div className="bg-blue-50 border-b border-blue-200 px-4 py-3">
       <div className="max-w-6xl mx-auto flex items-start sm:items-center justify-between">
         <div className="flex items-start sm:items-center space-x-3 flex-1 min-w-0">
-          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5 sm:mt-0" />
+          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5 sm:mt-0" />
           <div className="text-sm text-gray-700 min-w-0 flex-1">
-            <span className="font-medium">Service Issue:</span>
+            <span className="font-medium">Service Issue Resolved:</span>
             <span className="ml-1 block sm:inline">
-              Domain registration works, but the domain lookup feature is
-              currently not working. You can check your records directly at{" "}
-              <a
-                href="https://github.com/is-an-ai/is-an.ai/tree/main/records"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline"
-              >
-                GitHub repository
-              </a>
-              .
+              Domains registered between July 13, 04:00 - 21:00 UTC that were
+              not visible have been fixed.
             </span>
           </div>
         </div>
