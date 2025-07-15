@@ -35,7 +35,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
       return;
     }
 
-    const trimmedName = subdomainInput.trim();
+    const trimmedName = subdomainInput.trim().toLowerCase();
     setCheckingName(trimmedName);
 
     // Call the callback if availability result is available
