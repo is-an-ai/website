@@ -10,6 +10,8 @@ export const DISCORD_INVITE_URL = "https://discord.gg/gK769bxq3x";
 export const DOMAIN_SUFFIX = ".is-an.ai";
 export const BASE_DOMAIN = "is-an.ai";
 export const MAX_SUBDOMAINS_PER_USER = 5;
+// Global service state
+export const REGISTRAR_AT_CAPACITY = true; // Toggle to disable new registrations globally
 
 // Local Storage Keys
 export const AUTH_TOKEN_KEY = "auth_token";

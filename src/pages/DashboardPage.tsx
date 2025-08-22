@@ -14,7 +14,11 @@ import {
   BugReportButton,
 } from "@/components";
 import Toast from "@/components/Toast";
-import { DOMAIN_SUFFIX, MAX_SUBDOMAINS_PER_USER } from "@/lib/constants";
+import {
+  DOMAIN_SUFFIX,
+  MAX_SUBDOMAINS_PER_USER,
+  REGISTRAR_AT_CAPACITY,
+} from "@/lib/constants";
 import {
   Subdomain,
   CreateSubdomainRequest,
@@ -66,9 +70,18 @@ const DashboardPage = () => {
 
   // Check if user has reached subdomain limit
   const hasReachedLimit = subdomains.length >= MAX_SUBDOMAINS_PER_USER;
+  const registrarAtCapacity = REGISTRAR_AT_CAPACITY === true;
   const isLegacyUser = subdomains.length > MAX_SUBDOMAINS_PER_USER;
 
   const handleCreateSubdomain = async (data: CreateSubdomainRequest) => {
+    if (registrarAtCapacity) {
+      showToast(
+        "New registrations are paused: registrar capacity reached. We'll be back after nameserver rollout.",
+        "error"
+      );
+      return;
+    }
+
     if (hasReachedLimit) {
       showToast(
         `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
@@ -136,6 +149,14 @@ const DashboardPage = () => {
     if (hasReachedLimit) {
       showToast(
         `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
+        "error"
+      );
+      return;
+    }
+
+    if (registrarAtCapacity) {
+      showToast(
+        "New registrations are paused: registrar capacity reached. We'll be back after nameserver rollout.",
         "error"
       );
       return;
@@ -284,10 +305,12 @@ const DashboardPage = () => {
             </div>
             <button
               onClick={showCreateModal}
-              disabled={hasReachedLimit}
+              disabled={hasReachedLimit || registrarAtCapacity}
               className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               title={
-                hasReachedLimit
+                registrarAtCapacity
+                  ? "New registrations are paused due to registrar capacity."
+                  : hasReachedLimit
                   ? `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`
                   : undefined
               }
@@ -307,7 +330,13 @@ const DashboardPage = () => {
               <p className="text-gray-600 mb-4">No subdomains yet</p>
               <button
                 onClick={showCreateModal}
-                className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
+                disabled={registrarAtCapacity}
+                className="text-cyan-600 hover:text-cyan-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                title={
+                  registrarAtCapacity
+                    ? "New registrations are paused due to registrar capacity."
+                    : undefined
+                }
               >
                 Create your first subdomain
               </button>
