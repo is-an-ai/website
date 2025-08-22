@@ -31,12 +31,20 @@ const ServiceBanner: React.FC<ServiceBannerProps> = ({
             <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5 sm:mt-0" />
           )}
           <div className="text-sm text-gray-700 min-w-0 flex-1">
-            {atCapacity ?? (
+            {atCapacity ? (
               <>
                 <span className="font-medium">Registrar capacity reached.</span>
                 <span className="ml-1 block sm:inline">
                   New subdomain registrations are temporarily paused. We’re
                   building our own nameservers and will be back soon.
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-medium">Service Issue Resolved:</span>
+                <span className="ml-1 block sm:inline">
+                  Domains registered between July 13, 04:00 - 21:00 UTC that
+                  were not visible have been fixed.
                 </span>
               </>
             )}
