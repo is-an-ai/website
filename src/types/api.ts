@@ -50,6 +50,11 @@ export interface CreateSubdomainResponse {
   ownerId: string;
 }
 
+export interface SubdomainAvailabilityResponse {
+  available: boolean;
+  error?: string;
+}
+
 // API Response types
 export interface ApiError {
   code: number;

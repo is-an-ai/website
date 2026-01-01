@@ -5,12 +5,12 @@ import {
   CreateSubdomainResponse,
   DeleteResponse,
   ApiError,
+  SubdomainAvailabilityResponse,
 } from "@/types/api";
 import {
   API_BASE_URL,
   AUTH_TOKEN_KEY,
   API_ENDPOINTS,
-  PUBLIC_ENDPOINTS,
   HTTP_STATUS,
 } from "./constants";
 
@@ -93,7 +93,31 @@ class ApiClient {
   }
 
   private isPublicEndpoint(endpoint: string): boolean {
-    return PUBLIC_ENDPOINTS.some((path) => endpoint.startsWith(path));
+    // Auth endpoints
+    if (endpoint.startsWith("/v1/dev/")) {
+      return true;
+    }
+    if (endpoint.startsWith("/v1/user/auth/")) {
+      return true;
+    }
+
+    // Public domain read endpoints (⚠️ /v1/domain/my is NOT public)
+    if (endpoint === API_ENDPOINTS.DOMAINS) {
+      return true;
+    }
+    if (endpoint.startsWith("/v1/domain/id/")) {
+      return true;
+    }
+    if (endpoint.startsWith("/v1/domain/name/")) {
+      return true;
+    }
+
+    // Public availability endpoint (v2)
+    if (endpoint.startsWith("/v2/domain/available/")) {
+      return true;
+    }
+
+    return false;
   }
 
   logout() {
@@ -121,24 +145,18 @@ class ApiClient {
     return this.request<Subdomain>(API_ENDPOINTS.DOMAIN_BY_NAME(name));
   }
 
-  async checkSubdomainAvailability(name: string): Promise<boolean> {
-    try {
-      await this.getSubdomainByName(name);
-      return false; // If we get a response, subdomain exists
-    } catch (error) {
-      const apiError = error as ApiError;
-      if (apiError.code === HTTP_STATUS.NOT_FOUND) {
-        // SUBDOMAIN_NOT_FOUND
-        return true; // Subdomain is available
-      }
-      throw error; // Re-throw other errors
-    }
+  async checkSubdomainAvailability(
+    name: string
+  ): Promise<SubdomainAvailabilityResponse> {
+    return this.request<SubdomainAvailabilityResponse>(
+      API_ENDPOINTS.DOMAIN_AVAILABILITY_V2(name)
+    );
   }
 
   async createSubdomain(
     data: CreateSubdomainRequest
   ): Promise<CreateSubdomainResponse> {
-    return this.request<CreateSubdomainResponse>(API_ENDPOINTS.DOMAINS, {
+    return this.request<CreateSubdomainResponse>(API_ENDPOINTS.CREATE_DOMAIN_V2, {
       method: "POST",
       body: JSON.stringify(data),
     });

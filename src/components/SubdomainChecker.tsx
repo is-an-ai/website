@@ -37,17 +37,12 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
 
     const trimmedName = subdomainInput.trim().toLowerCase();
     setCheckingName(trimmedName);
-
-    // Call the callback if availability result is available
-    if (availabilityResult !== undefined) {
-      onAvailabilityCheck?.(trimmedName, availabilityResult);
-    }
-  }, [subdomainInput, availabilityResult, onAvailabilityCheck]);
+  }, [subdomainInput]);
 
   // Call callback when availability result changes
   React.useEffect(() => {
     if (checkingName && availabilityResult !== undefined) {
-      onAvailabilityCheck?.(checkingName, availabilityResult);
+      onAvailabilityCheck?.(checkingName, availabilityResult.available);
     }
   }, [checkingName, availabilityResult, onAvailabilityCheck]);
 
@@ -86,7 +81,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
       );
     }
 
-    if (hasChecked && availabilityResult === true) {
+    if (hasChecked && availabilityResult?.available === true) {
       return (
         <div className="flex items-center justify-center space-x-2 text-green-600">
           <svg
@@ -109,7 +104,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
       );
     }
 
-    if (hasChecked && availabilityResult === false) {
+    if (hasChecked && availabilityResult?.available === false) {
       return (
         <div className="flex items-center justify-center space-x-2 text-orange-600">
           <svg
@@ -126,7 +121,8 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
             />
           </svg>
           <span className="text-sm font-medium text-center">
-            {subdomainInput}.is-an.ai is already taken
+            {availabilityResult.error ||
+              `${subdomainInput}.is-an.ai is not available`}
           </span>
         </div>
       );

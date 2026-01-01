@@ -76,7 +76,7 @@ const DashboardPage = () => {
   const handleCreateSubdomain = async (data: CreateSubdomainRequest) => {
     if (registrarAtCapacity) {
       showToast(
-        "New registrations are paused: registrar capacity reached. We'll be back after nameserver rollout.",
+        "New registrations are temporarily unavailable. Please try again later.",
         "error"
       );
       return;
@@ -156,7 +156,7 @@ const DashboardPage = () => {
 
     if (registrarAtCapacity) {
       showToast(
-        "New registrations are paused: registrar capacity reached. We'll be back after nameserver rollout.",
+        "New registrations are temporarily unavailable. Please try again later.",
         "error"
       );
       return;
@@ -309,7 +309,7 @@ const DashboardPage = () => {
               className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               title={
                 registrarAtCapacity
-                  ? "New registrations are paused due to registrar capacity."
+                  ? "New registrations are temporarily unavailable."
                   : hasReachedLimit
                   ? `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`
                   : undefined
@@ -334,7 +334,7 @@ const DashboardPage = () => {
                 className="text-cyan-600 hover:text-cyan-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
                 title={
                   registrarAtCapacity
-                    ? "New registrations are paused due to registrar capacity."
+                    ? "New registrations are temporarily unavailable."
                     : undefined
                 }
               >

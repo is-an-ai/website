@@ -8,7 +8,7 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const BANNER_KEY = "service-banner-july-13-closed";
+const BANNER_KEY = "service-banner-migration-dns-he-closed";
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);

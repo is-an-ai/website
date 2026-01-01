@@ -164,7 +164,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
         return; // Force availability check first
       }
 
-      if (!availabilityResult) {
+      if (!availabilityResult?.available) {
         return; // Can't submit if not available
       }
 
@@ -256,7 +256,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
           : true
       ) &&
       hasCheckedAvailability &&
-      availabilityResult === true;
+      availabilityResult?.available === true;
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -325,7 +325,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
               {/* Availability Status */}
               {hasCheckedAvailability && (
                 <div className="mt-2">
-                  {availabilityResult === true && (
+                  {availabilityResult?.available === true && (
                     <div className="flex items-center text-green-600 text-sm">
                       <svg
                         className="w-4 h-4 mr-1"
@@ -341,7 +341,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                       Available
                     </div>
                   )}
-                  {availabilityResult === false && (
+                  {availabilityResult?.available === false && (
                     <div className="flex items-center text-red-600 text-sm">
                       <svg
                         className="w-4 h-4 mr-1"
@@ -354,7 +354,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                           clipRule="evenodd"
                         />
                       </svg>
-                      Not available
+                      {availabilityResult.error || "Not available"}
                     </div>
                   )}
                   {availabilityError && (

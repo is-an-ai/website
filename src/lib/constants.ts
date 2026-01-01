@@ -11,7 +11,7 @@ export const DOMAIN_SUFFIX = ".is-an.ai";
 export const BASE_DOMAIN = "is-an.ai";
 export const MAX_SUBDOMAINS_PER_USER = 5;
 // Global service state
-export const REGISTRAR_AT_CAPACITY = true; // Toggle to disable new registrations globally
+export const REGISTRAR_AT_CAPACITY: boolean = false; // Toggle to disable new registrations globally
 
 // Local Storage Keys
 export const AUTH_TOKEN_KEY = "auth_token";
@@ -29,10 +29,9 @@ export const API_ENDPOINTS = {
   DOMAIN_BY_NAME: (name: string) => `/v1/domain/name/${name}`,
   UPDATE_DOMAIN: (name: string) => `/v1/domain/${name}`,
   DELETE_DOMAIN: (name: string) => `/v1/domain/${name}`,
+  CREATE_DOMAIN_V2: "/v2/domain",
+  DOMAIN_AVAILABILITY_V2: (name: string) => `/v2/domain/available/${name}`,
 } as const;
-
-// Public API Endpoints (no auth required)
-export const PUBLIC_ENDPOINTS = ["/v1/dev/"];
 
 // Toast Configuration
 export const TOAST_DURATION = 3000; // milliseconds
