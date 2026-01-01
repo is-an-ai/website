@@ -51,6 +51,8 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
   ({ onSubmit, onNavigateToDocs, isLoading, error }) => {
     const modal = useModal();
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [formData, setFormData] = useState({
       subdomainName: "",
       description: "",
@@ -149,6 +151,10 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
 
+      if (isSubmitting || isLoading) {
+        return;
+      }
+
       // Check for underscore prefix
       if (formData.subdomainName.trim().startsWith("_")) {
         setSubdomainNameError(
@@ -202,6 +208,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
       };
 
       try {
+        setIsSubmitting(true);
         await onSubmit(requestData);
 
         // Check for platform guidance after successful submission
@@ -229,6 +236,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
         modal.remove();
       } catch (err) {
         console.error(err);
+        setIsSubmitting(false);
       }
     };
 
@@ -245,6 +253,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
 
     const hasCheckedAvailability =
       checkingName === formData.subdomainName.trim();
+    const isBusy = isLoading || isSubmitting;
     const isFormValid =
       formData.subdomainName.trim() &&
       !subdomainNameError &&
@@ -268,7 +277,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
             <button
               onClick={modal.remove}
               className="text-gray-400 hover:text-gray-600 transition-colors"
-              disabled={isLoading}
+              disabled={isBusy}
             >
               <svg
                 className="w-6 h-6"
@@ -303,7 +312,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                       }
                       placeholder="my-awesome-project"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      disabled={isLoading}
+                      disabled={isBusy}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
                       {DOMAIN_SUFFIX}
@@ -314,7 +323,9 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                   type="button"
                   onClick={handleCheckAvailability}
                   disabled={
-                    !formData.subdomainName.trim() || isCheckingAvailability
+                    !formData.subdomainName.trim() ||
+                    isCheckingAvailability ||
+                    isBusy
                   }
                   className="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium whitespace-nowrap"
                 >
@@ -413,7 +424,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 placeholder="Brief description of your project (optional)"
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                disabled={isLoading}
+                disabled={isBusy}
               />
             </div>
 
@@ -427,7 +438,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                   type="button"
                   onClick={addRecord}
                   className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                  disabled={isLoading}
+                  disabled={isBusy}
                 >
                   + Add Record
                 </button>
@@ -442,7 +453,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                         updateRecord(index, "type", e.target.value)
                       }
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      disabled={isLoading}
+                      disabled={isBusy}
                     >
                       {DNS_RECORD_TYPES.map((type) => (
                         <option key={type.value} value={type.value}>
@@ -464,14 +475,14 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                         )?.placeholder || "Enter value"
                       }
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      disabled={isLoading}
+                      disabled={isBusy}
                     />
                     {records.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeRecord(index)}
                         className="text-red-600 hover:text-red-700 p-2"
-                        disabled={isLoading}
+                        disabled={isBusy}
                       >
                         <svg
                           className="w-4 h-4"
@@ -555,16 +566,16 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 type="button"
                 onClick={modal.remove}
                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
-                disabled={isLoading}
+                disabled={isBusy}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={!isFormValid || isLoading}
+                disabled={!isFormValid || isBusy}
                 className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
               >
-                {isLoading ? (
+                {isBusy ? (
                   <div className="flex items-center justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Creating...
