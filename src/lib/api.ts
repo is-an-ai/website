@@ -112,7 +112,7 @@ class ApiClient {
       return true;
     }
 
-    // Public availability endpoint (v2)
+    // Public availability endpoint (v3)
     if (endpoint.startsWith("/v2/domain/available/")) {
       return true;
     }
@@ -156,10 +156,13 @@ class ApiClient {
   async createSubdomain(
     data: CreateSubdomainRequest
   ): Promise<CreateSubdomainResponse> {
-    return this.request<CreateSubdomainResponse>(API_ENDPOINTS.CREATE_DOMAIN_V2, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return this.request<CreateSubdomainResponse>(
+      API_ENDPOINTS.CREATE_DOMAIN_V2,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
   }
 
   async updateSubdomain(

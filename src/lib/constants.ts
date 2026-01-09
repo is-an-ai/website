@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
   DOMAIN_BY_NAME: (name: string) => `/v1/domain/name/${name}`,
   UPDATE_DOMAIN: (name: string) => `/v1/domain/${name}`,
   DELETE_DOMAIN: (name: string) => `/v1/domain/${name}`,
-  CREATE_DOMAIN_V2: "/v2/domain",
+  CREATE_DOMAIN_V2: "/v3/domain",
   DOMAIN_AVAILABILITY_V2: (name: string) => `/v2/domain/available/${name}`,
 } as const;
 
