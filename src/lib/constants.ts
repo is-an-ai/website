@@ -23,13 +23,13 @@ export const API_ENDPOINTS = {
   GITHUB_AUTH: "/v1/user/auth/github",
 
   // Domain
-  DOMAINS: "/v1/domain",
-  MY_DOMAINS: "/v1/domain/my",
-  DOMAIN_BY_ID: (id: string) => `/v1/domain/id/${id}`,
-  DOMAIN_BY_NAME: (name: string) => `/v1/domain/name/${name}`,
-  UPDATE_DOMAIN: (name: string) => `/v1/domain/${name}`,
-  DELETE_DOMAIN: (name: string) => `/v1/domain/${name}`,
-  CREATE_DOMAIN_V2: "/v3/domain",
+  DOMAINS: "/v3/domain",
+  MY_DOMAINS: "/v3/domain/my",
+  DOMAIN_BY_ID: (id: string) => `/v3/domain/id/${id}`,
+  DOMAIN_BY_NAME: (name: string) => `/v3/domain/name/${name}`,
+  UPDATE_DOMAIN: (name: string) => `/v3/domain/${name}`,
+  DELETE_DOMAIN: (name: string) => `/v3/domain/${name}`,
+  CREATE_DOMAIN: "/v3/domain",
   DOMAIN_AVAILABILITY_V2: (name: string) => `/v2/domain/available/${name}`,
 } as const;
 

@@ -156,13 +156,10 @@ class ApiClient {
   async createSubdomain(
     data: CreateSubdomainRequest
   ): Promise<CreateSubdomainResponse> {
-    return this.request<CreateSubdomainResponse>(
-      API_ENDPOINTS.CREATE_DOMAIN_V2,
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    return this.request<CreateSubdomainResponse>(API_ENDPOINTS.CREATE_DOMAIN, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   }
 
   async updateSubdomain(
