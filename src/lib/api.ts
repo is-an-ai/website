@@ -29,6 +29,13 @@ class ApiClient {
     }
   }
 
+  private getToken(): string | null {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+  }
+
   private clearToken() {
     this.token = null;
     if (typeof window !== "undefined") {
@@ -40,7 +47,11 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    // Token can be written after this singleton is instantiated (e.g. auth callback)
+    this.loadToken();
+
     const url = `${this.baseUrl}${endpoint}`;
+    const method = (options.method ?? "GET").toUpperCase();
 
     const config: RequestInit = {
       headers: {
@@ -51,10 +62,11 @@ class ApiClient {
     };
 
     // Add auth token if available and not a public endpoint
-    if (this.token && !this.isPublicEndpoint(endpoint)) {
+    const token = this.getToken() ?? this.token;
+    if (token && !this.isPublicEndpoint(endpoint, method)) {
       config.headers = {
         ...config.headers,
-        Authorization: `Bearer ${this.token}`,
+        Authorization: `Bearer ${token}`,
       };
     }
 
@@ -92,7 +104,7 @@ class ApiClient {
     }
   }
 
-  private isPublicEndpoint(endpoint: string): boolean {
+  private isPublicEndpoint(endpoint: string, method: string): boolean {
     // Auth endpoints
     if (endpoint.startsWith("/v1/dev/")) {
       return true;
@@ -101,19 +113,20 @@ class ApiClient {
       return true;
     }
 
-    // Public domain read endpoints (⚠️ /v1/domain/my is NOT public)
-    if (endpoint === API_ENDPOINTS.DOMAINS) {
+    // Public domain read endpoints (⚠️ /v3/domain/my is NOT public)
+    // Note: /v3/domain is public only for GET. POST requires auth.
+    if (endpoint === API_ENDPOINTS.DOMAINS && method === "GET") {
       return true;
     }
-    if (endpoint.startsWith("/v1/domain/id/")) {
+    if (endpoint.startsWith("/v3/domain/id/") && method === "GET") {
       return true;
     }
-    if (endpoint.startsWith("/v1/domain/name/")) {
+    if (endpoint.startsWith("/v3/domain/name/") && method === "GET") {
       return true;
     }
 
     // Public availability endpoint (v3)
-    if (endpoint.startsWith("/v2/domain/available/")) {
+    if (endpoint.startsWith("/v2/domain/available/") && method === "GET") {
       return true;
     }
 
@@ -125,7 +138,7 @@ class ApiClient {
   }
 
   isAuthenticated(): boolean {
-    return !!this.token;
+    return !!this.getToken();
   }
 
   // Domain methods
