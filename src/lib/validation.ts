@@ -1,5 +1,100 @@
 import { DNSRecord } from "@/types/api";
 
+// ===== Vercel 서브도메인 검증 =====
+
+/**
+ * 서브도메인이 _vercel.{subdomain} 형태인지 확인
+ * @param name - 서브도메인 이름 (예: "_vercel.example")
+ * @returns boolean
+ */
+export const isVercelSubdomain = (name: string): boolean => {
+  const pattern = /^_vercel\.[a-zA-Z0-9][a-zA-Z0-9.-]*$/;
+  return pattern.test(name);
+};
+
+/**
+ * _vercel 서브도메인에서 기본 서브도메인 이름 추출
+ * @param name - 서브도메인 이름 (예: "_vercel.example")
+ * @returns 기본 서브도메인 (예: "example") 또는 null
+ */
+export const getBaseSubdomain = (name: string): string | null => {
+  if (!isVercelSubdomain(name)) {
+    return null;
+  }
+  // "_vercel.example" → "example"
+  return name.replace("_vercel.", "");
+};
+
+/**
+ * 서브도메인 이름이 유효한지 검증
+ * - 일반 서브도메인: _로 시작 불가
+ * - Vercel 서브도메인: _vercel.{subdomain} 형태만 허용, TXT 레코드만 허용
+ * @param name - 서브도메인 이름
+ * @param records - DNS 레코드 배열 (Vercel 서브도메인 검증 시 필요)
+ * @returns { isValid, error, isVercel, baseSubdomain }
+ */
+export const validateSubdomainName = (
+  name: string,
+  records?: DNSRecord[]
+): {
+  isValid: boolean;
+  error?: string;
+  isVercel: boolean;
+  baseSubdomain?: string;
+} => {
+  const trimmedName = name.trim();
+
+  // _vercel.{subdomain} 형태 체크
+  if (trimmedName.startsWith("_vercel.")) {
+    if (!isVercelSubdomain(trimmedName)) {
+      return {
+        isValid: false,
+        error:
+          "Invalid Vercel subdomain format. Use _vercel.{your-subdomain} format.",
+        isVercel: true,
+      };
+    }
+
+    const baseSubdomain = getBaseSubdomain(trimmedName);
+
+    // Vercel 서브도메인은 TXT 레코드만 허용
+    if (records && records.length > 0) {
+      const hasNonTxtRecord = records.some(
+        (r) => r.type !== "TXT" && (typeof r.value === "string" ? r.value.trim() !== "" : true)
+      );
+      if (hasNonTxtRecord) {
+        return {
+          isValid: false,
+          error:
+            "Vercel verification subdomain (_vercel.*) only supports TXT records.",
+          isVercel: true,
+          baseSubdomain: baseSubdomain || undefined,
+        };
+      }
+    }
+
+    return {
+      isValid: true,
+      isVercel: true,
+      baseSubdomain: baseSubdomain || undefined,
+    };
+  }
+
+  // 일반 서브도메인: _로 시작 불가
+  if (trimmedName.startsWith("_")) {
+    return {
+      isValid: false,
+      error:
+        "Subdomain names cannot start with underscore (_). Use _vercel.{subdomain} format for Vercel domain verification.",
+      isVercel: false,
+    };
+  }
+
+  return { isValid: true, isVercel: false };
+};
+
+// ===== DNS 레코드 검증 =====
+
 // IPv4 주소 검증
 export const isValidIPv4 = (ip: string): boolean => {
   const ipv4Regex =

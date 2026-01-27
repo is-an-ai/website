@@ -3,7 +3,7 @@ import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import { CreateSubdomainRequest, DNSRecord } from "@/types/api";
 import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
-import { validateDNSRecords } from "@/lib/validation";
+import { validateDNSRecords, validateSubdomainName } from "@/lib/validation";
 import {
   detectPlatform,
   hasCnameRecord,
@@ -68,6 +68,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
       null
     );
     const [vercelWarning, setVercelWarning] = useState<string | null>(null);
+    const [isVercelMode, setIsVercelMode] = useState(false);
 
     // Use React Query for availability checking
     const {
@@ -76,35 +77,55 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
       error: availabilityError,
     } = useSubdomainAvailability(checkingName);
 
-    const handleSubdomainNameChange = useCallback((value: string) => {
-      setFormData((prev) => ({ ...prev, subdomainName: value }));
+    const handleSubdomainNameChange = useCallback(
+      (value: string) => {
+        setFormData((prev) => ({ ...prev, subdomainName: value }));
 
-      // Validate subdomain name format
-      if (value.trim() && value.trim().startsWith("_")) {
-        setSubdomainNameError(
-          "Subdomain names cannot start with underscore (_)"
-        );
-      } else {
-        setSubdomainNameError(null);
-      }
-    }, []);
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          setSubdomainNameError(null);
+          setIsVercelMode(false);
+          return;
+        }
+
+        // Validate subdomain name (supports _vercel.{subdomain} format)
+        const validation = validateSubdomainName(trimmedValue);
+
+        if (!validation.isValid) {
+          setSubdomainNameError(validation.error || "Invalid subdomain name");
+          setIsVercelMode(validation.isVercel);
+        } else {
+          setSubdomainNameError(null);
+          setIsVercelMode(validation.isVercel);
+
+          // If switching to Vercel mode, reset records to TXT only
+          if (validation.isVercel) {
+            setRecords([{ type: "TXT", value: "" }]);
+          }
+        }
+      },
+      []
+    );
 
     const handleCheckAvailability = useCallback(() => {
-      if (!formData.subdomainName.trim()) return;
+      const trimmedName = formData.subdomainName.trim();
+      if (!trimmedName) return;
 
-      // Check for underscore prefix before making API call
-      if (formData.subdomainName.trim().startsWith("_")) {
-        setSubdomainNameError(
-          "Subdomain names cannot start with underscore (_)"
-        );
+      // Validate subdomain name (supports _vercel.{subdomain} format)
+      const validation = validateSubdomainName(trimmedName, records);
+
+      if (!validation.isValid) {
+        setSubdomainNameError(validation.error || "Invalid subdomain name");
         return;
       }
 
-      setCheckingName(formData.subdomainName.trim());
-    }, [formData.subdomainName]);
+      setCheckingName(trimmedName);
+    }, [formData.subdomainName, records]);
 
     const addRecord = () => {
-      setRecords([...records, { type: "A", value: "" }]);
+      // Vercel mode only allows TXT records
+      const newRecordType = isVercelMode ? "TXT" : "A";
+      setRecords([...records, { type: newRecordType, value: "" }]);
     };
 
     const removeRecord = (index: number) => {
@@ -155,16 +176,26 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
         return;
       }
 
-      // Check for underscore prefix
-      if (formData.subdomainName.trim().startsWith("_")) {
+      const trimmedName = formData.subdomainName.trim();
+
+      // Filter out empty records first for validation
+      const nonEmptyRecords = records.filter((record) => {
+        if (typeof record.value === "string") {
+          return record.value.trim() !== "";
+        }
+        return Array.isArray(record.value) ? record.value.length > 0 : true;
+      });
+
+      // Validate subdomain name (supports _vercel.{subdomain} format)
+      const nameValidation = validateSubdomainName(trimmedName, nonEmptyRecords);
+      if (!nameValidation.isValid) {
         setSubdomainNameError(
-          "Subdomain names cannot start with underscore (_)"
+          nameValidation.error || "Invalid subdomain name"
         );
         return;
       }
 
-      const hasCheckedAvailability =
-        checkingName === formData.subdomainName.trim();
+      const hasCheckedAvailability = checkingName === trimmedName;
 
       if (!hasCheckedAvailability) {
         return; // Force availability check first
@@ -444,6 +475,32 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 </button>
               </div>
 
+              {/* Vercel mode info */}
+              {isVercelMode && (
+                <div className="mb-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="flex items-start">
+                    <svg
+                      className="w-4 h-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div className="text-sm text-blue-800">
+                      <p className="font-medium">Vercel Domain Verification</p>
+                      <p className="mt-1 text-blue-700">
+                        Only TXT records are allowed for Vercel verification.
+                        You must own the base subdomain to create this record.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-3">
                 {records.map((record, index) => (
                   <div key={index} className="flex gap-2 items-start">
@@ -453,13 +510,17 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                         updateRecord(index, "type", e.target.value)
                       }
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      disabled={isBusy}
+                      disabled={isBusy || isVercelMode}
                     >
-                      {DNS_RECORD_TYPES.map((type) => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
-                        </option>
-                      ))}
+                      {isVercelMode ? (
+                        <option value="TXT">TXT Record</option>
+                      ) : (
+                        DNS_RECORD_TYPES.map((type) => (
+                          <option key={type.value} value={type.value}>
+                            {type.label}
+                          </option>
+                        ))
+                      )}
                     </select>
                     <input
                       type="text"
