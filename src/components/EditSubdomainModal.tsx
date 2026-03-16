@@ -5,7 +5,7 @@ import { DOMAIN_SUFFIX } from "@/lib/constants";
 import {
   validateDNSRecords,
   validateSubdomainName,
-  isVercelSubdomain,
+  isVendorSubdomain,
 } from "@/lib/validation";
 import {
   detectPlatform,
@@ -66,8 +66,8 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
     const [subdomainNameError, setSubdomainNameError] = useState<string | null>(
       null
     );
-    const [vercelWarning, setVercelWarning] = useState<string | null>(null);
-    const [isVercelMode, setIsVercelMode] = useState(false);
+    const [vendorWarning, setVendorWarning] = useState<string | null>(null);
+    const [isVendorMode, setIsVendorMode] = useState(false);
 
     // Initialize form data when subdomain changes
     useEffect(() => {
@@ -76,11 +76,11 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
           description: subdomain.description,
         });
 
-        const isVercel = isVercelSubdomain(subdomain.subdomainName);
-        setIsVercelMode(isVercel);
+        const isVendor = isVendorSubdomain(subdomain.subdomainName);
+        setIsVendorMode(isVendor);
 
-        // For Vercel subdomains, ensure only TXT records
-        if (isVercel) {
+        // For vendor subdomains, ensure only TXT records
+        if (isVendor) {
           const txtRecords = subdomain.record.filter((r) => r.type === "TXT");
           setRecords(
             txtRecords.length > 0 ? [...txtRecords] : [{ type: "TXT", value: "" }]
@@ -93,7 +93,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
           );
         }
 
-        // Validate subdomain name (supports _vercel.{subdomain} format)
+        // Validate subdomain name (supports _{vendor}.{subdomain} format)
         const validation = validateSubdomainName(subdomain.subdomainName);
         if (!validation.isValid) {
           setSubdomainNameError(validation.error || "Invalid subdomain name");
@@ -104,8 +104,8 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
     }, [subdomain]);
 
     const addRecord = () => {
-      // Vercel mode only allows TXT records
-      const newRecordType = isVercelMode ? "TXT" : "A";
+      // Vendor mode only allows TXT records
+      const newRecordType = isVendorMode ? "TXT" : "A";
       setRecords([...records, { type: newRecordType, value: "" }]);
     };
 
@@ -129,16 +129,16 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
       } else {
         updatedRecords[index] = { ...updatedRecords[index], value };
 
-        // Check for Vercel URL and show warning
+        // Check for Vercel CNAME target and show PSL warning
         if (
           field === "value" &&
           updatedRecords[index].type === "CNAME" &&
           value.trim()
         ) {
           if (isVercelTarget(value)) {
-            setVercelWarning(PSL_WARNINGS.VERCEL_NOT_SUPPORTED);
+            setVendorWarning(PSL_WARNINGS.VERCEL_NOT_SUPPORTED);
           } else {
-            setVercelWarning(null);
+            setVendorWarning(null);
           }
         }
       }
@@ -173,7 +173,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
         return; // Need at least one valid record
       }
 
-      // Validate subdomain name with records (supports _vercel.{subdomain} format)
+      // Validate subdomain name with records (supports _{vendor}.{subdomain} format)
       const nameValidation = validateSubdomainName(
         subdomain.subdomainName,
         validRecords
@@ -339,8 +339,8 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                 </button>
               </div>
 
-              {/* Vercel mode info */}
-              {isVercelMode && (
+              {/* Vendor mode info */}
+              {isVendorMode && (
                 <div className="mb-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <div className="flex items-start">
                     <svg
@@ -355,9 +355,10 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                       />
                     </svg>
                     <div className="text-sm text-blue-800">
-                      <p className="font-medium">Vercel Domain Verification</p>
+                      <p className="font-medium">Vendor Domain Verification</p>
                       <p className="mt-1 text-blue-700">
-                        Only TXT records are allowed for Vercel verification.
+                        Only TXT records are allowed for vendor verification
+                        subdomains.
                       </p>
                     </div>
                   </div>
@@ -373,9 +374,9 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                         updateRecord(index, "type", e.target.value)
                       }
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      disabled={isLoading || isVercelMode}
+                      disabled={isLoading || isVendorMode}
                     >
-                      {isVercelMode ? (
+                      {isVendorMode ? (
                         <option value="TXT">TXT Record</option>
                       ) : (
                         DNS_RECORD_TYPES.map((type) => (
@@ -459,8 +460,8 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
               </div>
             )}
 
-            {/* Vercel Warning */}
-            {vercelWarning && <PSLWarning message={vercelWarning} />}
+            {/* PSL Warning (Vercel CNAME) */}
+            {vendorWarning && <PSLWarning message={vendorWarning} />}
 
             {/* Error Display */}
             {error && (

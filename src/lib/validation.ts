@@ -1,63 +1,52 @@
 import { DNSRecord } from "@/types/api";
 
-// ===== Vercel 서브도메인 검증 =====
+// ===== Vendor subdomain validation =====
 
-/**
- * 서브도메인이 _vercel.{subdomain} 형태인지 확인
- * @param name - 서브도메인 이름 (예: "_vercel.example")
- * @returns boolean
- */
-export const isVercelSubdomain = (name: string): boolean => {
-  const pattern = /^_vercel\.[a-zA-Z0-9][a-zA-Z0-9.-]*$/;
-  return pattern.test(name);
+const VENDOR_PATTERN = /^_([a-z0-9]+)\.[a-zA-Z0-9][a-zA-Z0-9.-]*$/;
+
+export const isVendorSubdomain = (name: string): boolean => {
+  return VENDOR_PATTERN.test(name);
 };
 
-/**
- * _vercel 서브도메인에서 기본 서브도메인 이름 추출
- * @param name - 서브도메인 이름 (예: "_vercel.example")
- * @returns 기본 서브도메인 (예: "example") 또는 null
- */
+export const getVendorName = (name: string): string | null => {
+  const match = name.match(VENDOR_PATTERN);
+  return match ? match[1].toLowerCase() : null;
+};
+
 export const getBaseSubdomain = (name: string): string | null => {
-  if (!isVercelSubdomain(name)) {
+  if (!isVendorSubdomain(name)) {
     return null;
   }
-  // "_vercel.example" → "example"
-  return name.replace("_vercel.", "");
+  return name.replace(/^_[a-z0-9]+\./i, "");
 };
 
-/**
- * 서브도메인 이름이 유효한지 검증
- * - 일반 서브도메인: _로 시작 불가
- * - Vercel 서브도메인: _vercel.{subdomain} 형태만 허용, TXT 레코드만 허용
- * @param name - 서브도메인 이름
- * @param records - DNS 레코드 배열 (Vercel 서브도메인 검증 시 필요)
- * @returns { isValid, error, isVercel, baseSubdomain }
- */
 export const validateSubdomainName = (
   name: string,
   records?: DNSRecord[]
 ): {
   isValid: boolean;
   error?: string;
-  isVercel: boolean;
+  isVendor: boolean;
+  vendorName?: string;
   baseSubdomain?: string;
 } => {
   const trimmedName = name.trim();
 
-  // _vercel.{subdomain} 형태 체크
-  if (trimmedName.startsWith("_vercel.")) {
-    if (!isVercelSubdomain(trimmedName)) {
+  // _{vendor}.{subdomain} pattern (e.g., _vercel.myapp, _discord.myapp)
+  if (trimmedName.startsWith("_")) {
+    if (!isVendorSubdomain(trimmedName)) {
       return {
         isValid: false,
         error:
-          "Invalid Vercel subdomain format. Use _vercel.{your-subdomain} format.",
-        isVercel: true,
+          "Invalid vendor subdomain format. Use _{vendor}.{your-subdomain} format.",
+        isVendor: true,
       };
     }
 
+    const vendorName = getVendorName(trimmedName);
     const baseSubdomain = getBaseSubdomain(trimmedName);
 
-    // Vercel 서브도메인은 TXT 레코드만 허용
+    // Vendor subdomains only allow TXT records
     if (records && records.length > 0) {
       const hasNonTxtRecord = records.some(
         (r) => r.type !== "TXT" && (typeof r.value === "string" ? r.value.trim() !== "" : true)
@@ -66,8 +55,9 @@ export const validateSubdomainName = (
         return {
           isValid: false,
           error:
-            "Vercel verification subdomain (_vercel.*) only supports TXT records.",
-          isVercel: true,
+            "Vendor verification subdomains (_{vendor}.*) only support TXT records.",
+          isVendor: true,
+          vendorName: vendorName || undefined,
           baseSubdomain: baseSubdomain || undefined,
         };
       }
@@ -75,47 +65,34 @@ export const validateSubdomainName = (
 
     return {
       isValid: true,
-      isVercel: true,
+      isVendor: true,
+      vendorName: vendorName || undefined,
       baseSubdomain: baseSubdomain || undefined,
     };
   }
 
-  // 일반 서브도메인: _로 시작 불가
-  if (trimmedName.startsWith("_")) {
-    return {
-      isValid: false,
-      error:
-        "Subdomain names cannot start with underscore (_). Use _vercel.{subdomain} format for Vercel domain verification.",
-      isVercel: false,
-    };
-  }
-
-  return { isValid: true, isVercel: false };
+  return { isValid: true, isVendor: false };
 };
 
-// ===== DNS 레코드 검증 =====
+// ===== DNS record validation =====
 
-// IPv4 주소 검증
 export const isValidIPv4 = (ip: string): boolean => {
   const ipv4Regex =
     /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
   return ipv4Regex.test(ip);
 };
 
-// IPv6 주소 검증
 export const isValidIPv6 = (ip: string): boolean => {
   const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::1$|^::$/;
   return ipv6Regex.test(ip);
 };
 
-// 도메인명 검증
 export const isValidDomain = (domain: string): boolean => {
   const domainRegex =
     /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return domainRegex.test(domain) && domain.length <= 253;
 };
 
-// DNS 레코드 검증
 export const validateDNSRecord = (
   record: DNSRecord
 ): { isValid: boolean; error?: string } => {
@@ -173,7 +150,6 @@ export const validateDNSRecord = (
       break;
 
     case "MX":
-      // MX 레코드는 더 복잡한 구조를 가지므로 별도 처리 필요
       if (typeof value !== "string" || !isValidDomain(value)) {
         return {
           isValid: false,
@@ -189,7 +165,6 @@ export const validateDNSRecord = (
   return { isValid: true };
 };
 
-// 여러 DNS 레코드 검증
 export const validateDNSRecords = (
   records: DNSRecord[]
 ): { isValid: boolean; errors: string[] } => {
@@ -205,9 +180,7 @@ export const validateDNSRecords = (
   return { isValid: errors.length === 0, errors };
 };
 
-// API 에러에서 사용자 친화적 메시지 추출
 export const getErrorMessage = (error: unknown): string => {
-  // Type guard for API error
   const isApiError = (
     err: unknown
   ): err is { code: number; message: string } => {
@@ -224,9 +197,7 @@ export const getErrorMessage = (error: unknown): string => {
   }
 
   if (error.code === 400) {
-    // 스키마 검증 에러인 경우
     if (error.message?.includes("DNS") || error.message?.includes("record")) {
-      // 더 구체적인 DNS 레코드 에러 메시지
       if (
         error.message?.includes("A record") &&
         error.message?.includes("IPv4")
