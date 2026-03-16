@@ -18,6 +18,98 @@ export interface BlogPostMeta {
 
 // Blog posts data - this will be the "database" for now
 const BLOG_POSTS_DATA = {
+  "cli-and-agent-support": {
+    title: "Introducing the is-an.ai CLI and Agent Plugin",
+    description:
+      "Register subdomains from your terminal or let AI agents do it for you — with the new is-an-ai CLI and plugin support for Claude Code and OpenClaw.",
+    date: "2026-03-17",
+    author: "is-an.ai Team",
+    tags: ["announcement", "cli", "plugin"],
+    content: `# Introducing the is-an.ai CLI and Agent Plugin
+
+We're excited to announce a new way to register and manage your \`.is-an.ai\` subdomains: **the is-an-ai CLI**.
+
+## What's New
+
+Until now, you had two options for registering a subdomain: the website or a GitHub Pull Request. Today, we're adding a third — a command-line tool that works in your terminal and integrates directly with AI coding agents.
+
+## The CLI
+
+Install nothing. Just run:
+
+\`\`\`bash
+npx is-an-ai check my-project
+npx is-an-ai register my-project -t CNAME -v my-project.vercel.app
+\`\`\`
+
+That's it. Your subdomain is live.
+
+### Two Modes
+
+**API mode** — Login once with GitHub, then register instantly:
+
+\`\`\`bash
+npx is-an-ai login
+npx is-an-ai register my-project -t A -v 1.2.3.4
+\`\`\`
+
+**PR mode** — No login needed. Uses your existing GitHub token to open a PR that auto-validates and auto-merges:
+
+\`\`\`bash
+npx is-an-ai register my-project -t A -v 1.2.3.4 --wait
+\`\`\`
+
+The \`--wait\` flag blocks until the PR merges and DNS deploys. Perfect for CI/CD pipelines and AI agents.
+
+### All Commands
+
+| Command | Description |
+|---------|-------------|
+| \`check <name>\` | Check subdomain availability |
+| \`register <name>\` | Register a new subdomain |
+| \`update <name>\` | Update DNS records |
+| \`delete <name>\` | Delete a subdomain |
+| \`list\` | List your subdomains |
+| \`login\` / \`logout\` | Manage authentication |
+
+## Agent Plugin Support
+
+The CLI is also available as a plugin for AI coding agents. When installed, agents can register subdomains on your behalf as part of their workflow — for example, deploying a project and setting up a custom domain in one step.
+
+**Claude Code:**
+\`\`\`
+/plugin install is-an-ai/cli
+\`\`\`
+
+**OpenClaw:**
+\`\`\`bash
+openclaw plugins install github:is-an-ai/cli
+\`\`\`
+
+Once installed, just ask your agent to "register a subdomain on is-an.ai" and it will handle the rest.
+
+## Vendor Subdomains
+
+We've also generalized our vendor verification system. You can now register \`_{vendor}.{subdomain}\` records for any platform — not just Vercel:
+
+\`\`\`bash
+npx is-an-ai register _vercel.my-project -t TXT -v "vc-domain-verify=..."
+npx is-an-ai register _discord.my-project -t TXT -v "discord-verify=..."
+\`\`\`
+
+These records are TXT-only and require ownership of the base subdomain.
+
+## Get Started
+
+\`\`\`bash
+npx is-an-ai check your-idea
+\`\`\`
+
+- **CLI repo**: [github.com/is-an-ai/cli](https://github.com/is-an-ai/cli)
+- **npm**: [npmjs.com/package/is-an-ai](https://www.npmjs.com/package/is-an-ai)
+- **Website**: [is-an.ai](https://is-an.ai)
+`,
+  },
   "getting-started-with-is-an-ai": {
     title: "Getting Started with is-an.ai",
     description:
@@ -155,6 +247,8 @@ export const getTagColor = (tag: string): string => {
     advanced: "bg-red-100 text-red-800",
     tips: "bg-yellow-100 text-yellow-800",
     announcement: "bg-indigo-100 text-indigo-800",
+    cli: "bg-emerald-100 text-emerald-800",
+    plugin: "bg-orange-100 text-orange-800",
   };
 
   return colors[tag as keyof typeof colors] || "bg-gray-100 text-gray-800";
