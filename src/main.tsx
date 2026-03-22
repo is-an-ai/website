@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HelmetProvider } from "react-helmet-async";
 import NiceModal from "@ebay/nice-modal-react";
 import App from "./App.tsx";
+import "./lib/i18n";
 import "./index.css";
 
 const queryClient = new QueryClient({

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { useTranslation } from "react-i18next";
 import { UpdateSubdomainRequest, DNSRecord, Subdomain } from "@/types/api";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
 import {
@@ -54,6 +55,7 @@ const DNS_RECORD_TYPES = [
 const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
   ({ onSubmit, onNavigateToDocs, subdomain, isLoading, error }) => {
     const modal = useModal();
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
       description: "",
@@ -240,7 +242,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Edit Subdomain</h3>
+            <h3 className="text-xl font-bold text-gray-900">{t("editModal.title")}</h3>
             <button
               onClick={modal.remove}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -266,7 +268,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
             {/* Subdomain Name (Read-only) */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Subdomain Name
+                {t("editModal.subdomainName")}
               </label>
               <div className="relative">
                 <input
@@ -280,7 +282,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                 </span>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Subdomain name cannot be changed after creation
+                {t("editModal.cannotChange")}
               </p>
               {/* Subdomain Name Validation Error */}
               {subdomainNameError && (
@@ -306,7 +308,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
             {/* Description */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Description
+                {t("editModal.description")}
               </label>
               <textarea
                 value={formData.description}
@@ -316,7 +318,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                     description: e.target.value,
                   }))
                 }
-                placeholder="Brief description of your project (optional)"
+                placeholder={t("editModal.descriptionPlaceholder")}
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                 disabled={isLoading}
@@ -327,7 +329,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-semibold text-gray-900">
-                  DNS Records
+                  {t("editModal.dnsRecords")}
                 </label>
                 <button
                   type="button"
@@ -335,7 +337,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                   className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                   disabled={isLoading}
                 >
-                  + Add Record
+                  {t("editModal.addRecord")}
                 </button>
               </div>
 
@@ -355,10 +357,9 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                       />
                     </svg>
                     <div className="text-sm text-blue-800">
-                      <p className="font-medium">Vendor Domain Verification</p>
+                      <p className="font-medium">{t("editModal.vendorTitle")}</p>
                       <p className="mt-1 text-blue-700">
-                        Only TXT records are allowed for vendor verification
-                        subdomains.
+                        {t("editModal.vendorDesc")}
                       </p>
                     </div>
                   </div>
@@ -446,7 +447,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                   </svg>
                   <div className="flex-1">
                     <h4 className="text-amber-800 text-sm font-medium mb-1">
-                      Please fix the following DNS record errors:
+                      {t("editModal.validationTitle")}
                     </h4>
                     <ul className="text-amber-700 text-sm space-y-1">
                       {validationErrors.map((error, index) => (
@@ -493,7 +494,7 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
                 disabled={isLoading}
               >
-                Cancel
+                {t("editModal.cancel")}
               </button>
               <button
                 type="submit"
@@ -503,10 +504,10 @@ const EditSubdomainModal = NiceModal.create<EditSubdomainModalProps>(
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Updating...
+                    {t("editModal.updating")}
                   </div>
                 ) : (
-                  "Update Subdomain"
+                  t("editModal.update")
                 )}
               </button>
             </div>

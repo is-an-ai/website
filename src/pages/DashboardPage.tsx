@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import NiceModal from "@ebay/nice-modal-react";
 import { useAuth } from "@/hooks/api/useAuth";
 import {
@@ -9,7 +10,12 @@ import {
   useDeleteSubdomain,
 } from "@/hooks/api/useSubdomains";
 import {
+  useMyHostings,
+  useDeleteHosting,
+} from "@/hooks/api/useHosting";
+import {
   CreateSubdomainModal,
+  DeployHostingModal,
   EditSubdomainModal,
   BugReportButton,
 } from "@/components";
@@ -23,11 +29,13 @@ import {
   Subdomain,
   CreateSubdomainRequest,
   UpdateSubdomainRequest,
+  HostingStatus,
 } from "@/types/api";
 import { getErrorMessage } from "@/lib/validation";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
 
   // React Query hooks
@@ -36,11 +44,17 @@ const DashboardPage = () => {
   const updateMutation = useUpdateSubdomain();
   const deleteMutation = useDeleteSubdomain();
 
+  // Hosting hooks
+  const { data: hostings = [], isLoading: hostingsLoading } = useMyHostings();
+  const deleteHostingMutation = useDeleteHosting();
+
   // Local state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingSubdomain, setDeletingSubdomain] = useState<Subdomain | null>(
     null
   );
+  const [showDeleteHostingConfirm, setShowDeleteHostingConfirm] = useState(false);
+  const [deletingHosting, setDeletingHosting] = useState<HostingStatus | null>(null);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -75,16 +89,13 @@ const DashboardPage = () => {
 
   const handleCreateSubdomain = async (data: CreateSubdomainRequest) => {
     if (registrarAtCapacity) {
-      showToast(
-        "New registrations are temporarily unavailable. Please try again later.",
-        "error"
-      );
+      showToast(t("dashboard.registrarUnavailable"), "error");
       return;
     }
 
     if (hasReachedLimit) {
       showToast(
-        `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
+        t("dashboard.maxSubdomains", { max: MAX_SUBDOMAINS_PER_USER }),
         "error"
       );
       return;
@@ -92,7 +103,7 @@ const DashboardPage = () => {
 
     try {
       await createMutation.mutateAsync(data);
-      showToast("Subdomain created successfully!");
+      showToast(t("dashboard.createdSuccess"));
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       showToast(errorMessage, "error");
@@ -109,7 +120,7 @@ const DashboardPage = () => {
         name: subdomainName,
         data,
       });
-      showToast("Subdomain updated successfully!");
+      showToast(t("dashboard.updatedSuccess"));
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       showToast(errorMessage, "error");
@@ -122,7 +133,7 @@ const DashboardPage = () => {
 
     try {
       await deleteMutation.mutateAsync(deletingSubdomain.subdomainName);
-      showToast("Subdomain deleted successfully!");
+      showToast(t("dashboard.deletedSuccess"));
       setShowDeleteConfirm(false);
       setDeletingSubdomain(null);
     } catch (error) {
@@ -134,9 +145,9 @@ const DashboardPage = () => {
   const handleCopySubdomain = async (subdomainName: string) => {
     try {
       await navigator.clipboard.writeText(`${subdomainName}${DOMAIN_SUFFIX}`);
-      showToast("Subdomain copied to clipboard!");
+      showToast(t("dashboard.copiedSuccess"));
     } catch {
-      showToast("Failed to copy to clipboard", "error");
+      showToast(t("dashboard.copyFailed"), "error");
     }
   };
 
@@ -145,20 +156,47 @@ const DashboardPage = () => {
     navigate(docsPath);
   };
 
+  const handleDeleteHosting = async () => {
+    if (!deletingHosting) return;
+
+    try {
+      await deleteHostingMutation.mutateAsync(deletingHosting.subdomain);
+      showToast("Hosted site deleted successfully");
+      setShowDeleteHostingConfirm(false);
+      setDeletingHosting(null);
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      showToast(errorMessage, "error");
+    }
+  };
+
+  const showDeployModal = () => {
+    NiceModal.show(DeployHostingModal, {
+      onSuccess: () => {
+        showToast("Site deployed successfully");
+      },
+    });
+  };
+
+  const showRedeployModal = (hosting: HostingStatus) => {
+    NiceModal.show(DeployHostingModal, {
+      onSuccess: () => {
+        showToast(`${hosting.subdomain}${DOMAIN_SUFFIX} re-deployed successfully`);
+      },
+    });
+  };
+
   const showCreateModal = () => {
     if (hasReachedLimit) {
       showToast(
-        `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`,
+        t("dashboard.maxSubdomains", { max: MAX_SUBDOMAINS_PER_USER }),
         "error"
       );
       return;
     }
 
     if (registrarAtCapacity) {
-      showToast(
-        "New registrations are temporarily unavailable. Please try again later.",
-        "error"
-      );
+      showToast(t("dashboard.registrarUnavailable"), "error");
       return;
     }
 
@@ -186,7 +224,7 @@ const DashboardPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t("dashboard.loading")}</p>
         </div>
       </div>
     );
@@ -200,17 +238,17 @@ const DashboardPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-3 sm:gap-0">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-mono">
-                Dashboard
+                {t("dashboard.title")}
               </h1>
               <p className="text-sm text-gray-600">
-                Welcome back, {user?.name}
+                {t("dashboard.welcomeBack", { name: user?.name })}
               </p>
             </div>
             <button
               onClick={logout}
               className="text-gray-600 hover:text-gray-900 text-sm self-start sm:self-auto"
             >
-              Sign out
+              {t("dashboard.signOut")}
             </button>
           </div>
         </div>
@@ -261,20 +299,20 @@ const DashboardPage = () => {
                 {isLegacyUser ? (
                   <div>
                     <span className="text-amber-800 text-sm font-medium block mb-1">
-                      Legacy Account Notice
+                      {t("dashboard.legacyNotice")}
                     </span>
                     <span className="text-amber-700 text-sm">
-                      You have {subdomains.length} subdomains from before our
-                      limit change. You can keep all existing subdomains, but
-                      new registrations are limited to {MAX_SUBDOMAINS_PER_USER}{" "}
-                      total. Delete some subdomains to create new ones.
+                      {t("dashboard.legacyDesc", {
+                        count: subdomains.length,
+                        max: MAX_SUBDOMAINS_PER_USER,
+                      })}
                     </span>
                   </div>
                 ) : (
                   <span className="text-amber-800 text-sm">
-                    You have reached the maximum limit of{" "}
-                    {MAX_SUBDOMAINS_PER_USER} subdomains per account. Delete an
-                    existing subdomain to create a new one.
+                    {t("dashboard.limitReached", {
+                      max: MAX_SUBDOMAINS_PER_USER,
+                    })}
                   </span>
                 )}
               </div>
@@ -287,20 +325,18 @@ const DashboardPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-1">
-                Your Subdomains
+                {t("dashboard.yourSubdomains")}
               </h2>
               <p className="text-sm text-gray-600">
-                {isLegacyUser ? (
-                  <>
-                    Manage your is-an.ai subdomains ({subdomains.length} total,
-                    limit: {MAX_SUBDOMAINS_PER_USER} for new accounts)
-                  </>
-                ) : (
-                  <>
-                    Manage your is-an.ai subdomains ({subdomains.length}/
-                    {MAX_SUBDOMAINS_PER_USER})
-                  </>
-                )}
+                {isLegacyUser
+                  ? t("dashboard.manageSubdomainsLegacy", {
+                      count: subdomains.length,
+                      max: MAX_SUBDOMAINS_PER_USER,
+                    })
+                  : t("dashboard.manageSubdomains", {
+                      count: subdomains.length,
+                      max: MAX_SUBDOMAINS_PER_USER,
+                    })}
               </p>
             </div>
             <button
@@ -309,13 +345,15 @@ const DashboardPage = () => {
               className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               title={
                 registrarAtCapacity
-                  ? "New registrations are temporarily unavailable."
+                  ? t("dashboard.registrarUnavailable")
                   : hasReachedLimit
-                  ? `Maximum ${MAX_SUBDOMAINS_PER_USER} subdomains allowed per account`
+                  ? t("dashboard.maxSubdomains", {
+                      max: MAX_SUBDOMAINS_PER_USER,
+                    })
                   : undefined
               }
             >
-              Create Subdomain
+              {t("dashboard.createSubdomain")}
             </button>
           </div>
 
@@ -323,22 +361,24 @@ const DashboardPage = () => {
           {isLoading ? (
             <div className="text-center py-8">
               <div className="w-6 h-6 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-gray-600 text-sm">Loading subdomains...</p>
+              <p className="text-gray-600 text-sm">
+                {t("dashboard.loadingSubdomains")}
+              </p>
             </div>
           ) : subdomains.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">No subdomains yet</p>
+              <p className="text-gray-600 mb-4">{t("dashboard.noSubdomains")}</p>
               <button
                 onClick={showCreateModal}
                 disabled={registrarAtCapacity}
                 className="text-cyan-600 hover:text-cyan-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
                 title={
                   registrarAtCapacity
-                    ? "New registrations are temporarily unavailable."
+                    ? t("dashboard.registrarUnavailable")
                     : undefined
                 }
               >
-                Create your first subdomain
+                {t("dashboard.createFirst")}
               </button>
             </div>
           ) : (
@@ -360,7 +400,7 @@ const DashboardPage = () => {
                             handleCopySubdomain(subdomain.subdomainName)
                           }
                           className="text-gray-400 hover:text-gray-600"
-                          title="Copy to clipboard"
+                          title={t("dashboard.copyToClipboard")}
                         >
                           <svg
                             className="w-4 h-4"
@@ -381,7 +421,7 @@ const DashboardPage = () => {
                         {subdomain.description}
                       </p>
                       <div className="text-xs text-gray-500">
-                        Created:{" "}
+                        {t("dashboard.created")}{" "}
                         {new Date(subdomain.createdAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -390,12 +430,107 @@ const DashboardPage = () => {
                         onClick={() => showEditModal(subdomain)}
                         className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
                       >
-                        Edit
+                        {t("dashboard.edit")}
                       </button>
                       <button
                         onClick={() => {
                           setDeletingSubdomain(subdomain);
                           setShowDeleteConfirm(true);
+                        }}
+                        className="text-red-600 hover:text-red-700 text-sm font-medium"
+                      >
+                        {t("dashboard.delete")}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Hosted Sites section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                Hosted Sites
+              </h2>
+              <p className="text-sm text-gray-600">
+                Deploy and manage static sites on your subdomains
+              </p>
+            </div>
+            <button
+              onClick={showDeployModal}
+              className="mt-3 sm:mt-0 bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium"
+            >
+              Deploy new site
+            </button>
+          </div>
+
+          {hostingsLoading ? (
+            <div className="text-center py-8">
+              <div className="w-6 h-6 border-2 border-cyan-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-gray-600 text-sm">Loading hosted sites...</p>
+            </div>
+          ) : hostings.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600 mb-4">
+                You haven't deployed any sites yet.
+              </p>
+              <button
+                onClick={showDeployModal}
+                className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
+              >
+                Deploy your first site
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {hostings.map((hosting: HostingStatus) => (
+                <div
+                  key={hosting.subdomain}
+                  className="border border-gray-200 rounded-lg p-4"
+                >
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-medium text-gray-900 font-mono">
+                          {hosting.subdomain}{DOMAIN_SUFFIX}
+                        </h3>
+                      </div>
+                      <a
+                        href={hosting.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-cyan-600 hover:text-cyan-700 font-mono break-all"
+                      >
+                        {hosting.url}
+                      </a>
+                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                        <span>{hosting.fileCount} files</span>
+                        <span>
+                          {hosting.totalSize < 1024 * 1024
+                            ? `${(hosting.totalSize / 1024).toFixed(1)} KB`
+                            : `${(hosting.totalSize / (1024 * 1024)).toFixed(1)} MB`}
+                        </span>
+                        <span>
+                          Deployed{" "}
+                          {new Date(hosting.lastDeployedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => showRedeployModal(hosting)}
+                        className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
+                      >
+                        Re-deploy
+                      </button>
+                      <button
+                        onClick={() => {
+                          setDeletingHosting(hosting);
+                          setShowDeleteHostingConfirm(true);
                         }}
                         className="text-red-600 hover:text-red-700 text-sm font-medium"
                       >
@@ -416,15 +551,19 @@ const DashboardPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Delete Subdomain
+              {t("dashboard.deleteTitle")}
             </h3>
             <p className="text-gray-600 mb-4">
-              Are you sure you want to delete{" "}
-              <span className="font-mono font-medium">
-                {deletingSubdomain?.subdomainName}
-                {DOMAIN_SUFFIX}
-              </span>
-              ? This action cannot be undone.
+              <Trans
+                i18nKey="dashboard.deleteConfirm"
+                values={{
+                  name: deletingSubdomain?.subdomainName,
+                  domain: DOMAIN_SUFFIX,
+                }}
+                components={{
+                  mono: <span className="font-mono font-medium" />,
+                }}
+              />
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -435,14 +574,53 @@ const DashboardPage = () => {
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
                 disabled={deleteMutation.isPending}
               >
-                Cancel
+                {t("dashboard.cancel")}
               </button>
               <button
                 onClick={handleDeleteSubdomain}
                 disabled={deleteMutation.isPending}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {deleteMutation.isPending ? "Deleting..." : "Delete"}
+                {deleteMutation.isPending
+                  ? t("dashboard.deleting")
+                  : t("dashboard.delete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete hosting confirmation modal */}
+      {showDeleteHostingConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Delete Hosted Site
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Are you sure you want to delete{" "}
+              <span className="font-mono font-medium">
+                {deletingHosting?.subdomain}{DOMAIN_SUFFIX}
+              </span>
+              ? This will remove all hosted files and cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowDeleteHostingConfirm(false);
+                  setDeletingHosting(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                disabled={deleteHostingMutation.isPending}
+              >
+                {t("dashboard.cancel")}
+              </button>
+              <button
+                onClick={handleDeleteHosting}
+                disabled={deleteHostingMutation.isPending}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleteHostingMutation.isPending ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

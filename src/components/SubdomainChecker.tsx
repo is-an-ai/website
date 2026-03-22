@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 
@@ -10,6 +11,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
   const [subdomainInput, setSubdomainInput] = useState("");
   const [checkingName, setCheckingName] = useState("");
   const { isAuthenticated, login } = useAuth();
+  const { t } = useTranslation();
 
   // Use React Query for availability checking
   const {
@@ -75,7 +77,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
             />
           </svg>
           <span className="text-sm text-center">
-            Error checking availability
+            {t("checker.errorChecking")}
           </span>
         </div>
       );
@@ -98,7 +100,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
             />
           </svg>
           <span className="text-sm font-medium text-center">
-            {subdomainInput}.is-an.ai is available!
+            {t("checker.available", { name: subdomainInput })}
           </span>
         </div>
       );
@@ -122,7 +124,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
           </svg>
           <span className="text-sm font-medium text-center">
             {availabilityResult.error ||
-              `${subdomainInput}.is-an.ai is not available`}
+              t("checker.notAvailable", { name: subdomainInput })}
           </span>
         </div>
       );
@@ -137,7 +139,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
     return (
       <div className="mt-4 p-4 bg-cyan-50 rounded-lg border border-cyan-200">
         <p className="text-sm text-cyan-800 mb-3 text-center">
-          Sign in to register your subdomain
+          {t("checker.signInPrompt")}
         </p>
         <div className="flex justify-center">
           <button
@@ -151,7 +153,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
             >
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
             </svg>
-            <span className="truncate">Continue with GitHub</span>
+            <span className="truncate">{t("checker.continueWithGithub")}</span>
           </button>
         </div>
       </div>
@@ -230,10 +232,10 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
         <div className="p-4 sm:p-6">
           <div className="text-center mb-4 sm:mb-6">
             <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-              Check Subdomain Availability
+              {t("checker.title")}
             </h3>
             <p className="text-sm sm:text-base text-gray-600">
-              Enter your desired subdomain to check if it's available
+              {t("checker.description")}
             </p>
           </div>
 
@@ -244,7 +246,7 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
                 value={subdomainInput}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
-                placeholder="your-awesome-project"
+                placeholder={t("checker.placeholder")}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm sm:text-base"
                 maxLength={63}
               />
@@ -260,10 +262,10 @@ const SubdomainChecker = ({ onAvailabilityCheck }: SubdomainCheckerProps) => {
               {isCheckingAvailability ? (
                 <div className="flex items-center justify-center">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Checking...
+                  {t("checker.checking")}
                 </div>
               ) : (
-                "Check"
+                t("checker.check")
               )}
             </button>
           </div>

@@ -1,32 +1,34 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const HowItWorksSection = () => {
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const { t } = useTranslation();
 
   const steps = [
     {
       step: 1,
-      title: "Choose subdomain",
-      description: "Pick any available name for your AI project",
+      title: t("howItWorks.step1Title"),
+      description: t("howItWorks.step1Desc"),
       icon: "🎯",
-      details: "Type your desired subdomain and check availability instantly",
+      details: t("howItWorks.step1Details"),
       color: "from-indigo-500 to-purple-600",
     },
     {
       step: 2,
-      title: "Point to your site",
-      description: "Enter your domain, IP, or hosting platform",
+      title: t("howItWorks.step2Title"),
+      description: t("howItWorks.step2Desc"),
       icon: "🔗",
-      details: "Works with Vercel, Netlify, GitHub Pages, and more",
+      details: t("howItWorks.step2Details"),
       color: "from-purple-500 to-pink-600",
     },
     {
       step: 3,
-      title: "You're live",
-      description: "DNS propagates within minutes, SSL included",
+      title: t("howItWorks.step3Title"),
+      description: t("howItWorks.step3Desc"),
       icon: "🚀",
-      details: "Automatic HTTPS, global CDN, and instant activation",
+      details: t("howItWorks.step3Details"),
       color: "from-pink-500 to-rose-600",
     },
   ];
@@ -66,15 +68,14 @@ const HowItWorksSection = () => {
           <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 rounded-full mb-6 shadow-sm">
             <span className="text-2xl mr-2">⚡</span>
             <span className="text-sm font-mono font-semibold text-purple-700">
-              Lightning fast setup
+              {t("howItWorks.badge")}
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 font-mono">
-            How it works
+            {t("howItWorks.title")}
           </h2>
           <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-            Three simple steps to get your AI project online with a professional
-            subdomain
+            {t("howItWorks.description")}
           </p>
         </motion.div>
 

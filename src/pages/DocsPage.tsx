@@ -367,6 +367,211 @@ const DocsPage = () => {
 
   const sections: DocSection[] = [
     {
+      id: "static-hosting",
+      title: "Static Site Hosting",
+      content: (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Static Site Hosting
+          </h2>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <h3 className="font-semibold text-green-900 mb-3">
+              Deploy static sites directly to your subdomain
+            </h3>
+            <p className="text-green-800 text-sm">
+              No external hosting platform needed. Build your site, deploy it
+              with a single command, and it's live at{" "}
+              <code className="bg-green-100 px-2 py-1 rounded text-sm">
+                your-app.is-an.ai
+              </code>
+              .
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Deploy via CLI
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  1. Log in (one-time setup)
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  npx is-an-ai login
+                </code>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  2. Deploy your build output
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  npx is-an-ai deploy my-app ./dist
+                </code>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  3. Your site is live
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  https://my-app.is-an.ai
+                </code>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Deploy via Web Dashboard
+            </h3>
+            <p className="text-gray-600 text-sm">
+              You can also deploy from the dashboard by dragging and dropping
+              your build folder. Go to your subdomain's settings and use the
+              hosting section to upload files directly from your browser.
+            </p>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="font-semibold text-blue-900 mb-3">
+              SPA (Single Page Application) Support
+            </h3>
+            <p className="text-blue-800 text-sm">
+              All hosted sites include automatic SPA fallback. If a requested
+              path doesn't match a file, the server serves{" "}
+              <code className="bg-blue-100 px-1 py-0.5 rounded text-xs">
+                index.html
+              </code>{" "}
+              instead, so client-side routing (React Router, Vue Router, etc.)
+              works out of the box.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Framework Examples
+            </h3>
+
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">R</span>
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900">
+                  React / Vite
+                </h4>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    npm run build && npx is-an-ai deploy my-app ./dist
+                  </code>
+                </div>
+              </div>
+            </div>
+
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-gray-900 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">N</span>
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900">
+                  Next.js (Static Export)
+                </h4>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    Set{" "}
+                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
+                      output: "export"
+                    </code>{" "}
+                    in next.config.js, then:
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    npm run build && npx is-an-ai deploy my-app ./out
+                  </code>
+                </div>
+              </div>
+            </div>
+
+            <div className="border rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center mr-3">
+                  <span className="text-white text-xs font-bold">H</span>
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900">
+                  Plain HTML
+                </h4>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-gray-50 rounded p-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    Just point to the directory containing your index.html:
+                  </p>
+                  <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                    npx is-an-ai deploy my-app ./public
+                  </code>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+            <h3 className="font-semibold text-amber-900 mb-3">Limits</h3>
+            <ul className="space-y-2 text-sm text-amber-800">
+              <li>
+                <strong>Max total size:</strong> 50 MB per deployment
+              </li>
+              <li>
+                <strong>Max file count:</strong> 1,000 files per deployment
+              </li>
+              <li>
+                An <code className="bg-amber-100 px-1 py-0.5 rounded text-xs">index.html</code>{" "}
+                file must be present in the root of the directory
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Re-deploy and Undeploy
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  Re-deploy (replaces the existing deployment):
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  npx is-an-ai deploy my-app ./dist
+                </code>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  Check hosting status:
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  npx is-an-ai hosting my-app
+                </code>
+              </div>
+              <div className="bg-gray-50 rounded p-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  Remove hosting entirely:
+                </p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded block">
+                  npx is-an-ai undeploy my-app
+                </code>
+              </div>
+            </div>
+            <p className="text-gray-500 text-xs">
+              Running deploy again on the same subdomain automatically replaces
+              the previous deployment. No need to undeploy first.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
       id: "how-it-works",
       title: "How It Works",
       content: (
