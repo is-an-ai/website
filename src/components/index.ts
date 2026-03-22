@@ -17,6 +17,7 @@ export { default as ExampleCard } from "./ExampleCard";
 
 // Modal components
 export { default as CreateSubdomainModal } from "./CreateSubdomainModal";
+export { default as DeployHostingModal } from "./DeployHostingModal";
 export { default as EditSubdomainModal } from "./EditSubdomainModal";
 export { default as PlatformGuidanceModal } from "./PlatformGuidanceModal";
 export { default as PSLWarning } from "./PSLWarning";

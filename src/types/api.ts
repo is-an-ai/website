@@ -55,6 +55,22 @@ export interface SubdomainAvailabilityResponse {
   error?: string;
 }
 
+// Hosting types
+export interface HostingResponse {
+  subdomain: string;
+  url: string;
+  fileCount: number;
+  totalSize: number;
+}
+
+export interface HostingStatus {
+  subdomain: string;
+  url: string;
+  fileCount: number;
+  totalSize: number;
+  lastDeployedAt: string;
+}
+
 // API Response types
 export interface ApiError {
   code: number;

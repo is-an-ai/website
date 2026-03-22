@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "dashboard": "dashboard",
+    "docs": "docs",
+    "examples": "examples",
+    "blog": "blog",
+    "github": "github"
+  },
+  "hero": {
+    "badge": "Free {{domain}} subdomains for AI projects",
+    "subtitle": "Free subdomains for AI projects. No DNS config, no waiting.",
+    "tagline": "Just like is-a.dev, but for AI stuff.",
+    "instantSetup": "Instant setup",
+    "freeSSL": "Free SSL",
+    "globalCDN": "Global CDN",
+    "staticHosting": "Static hosting",
+    "goToDashboard": "Go to Dashboard",
+    "manageSubdomains": "Manage your subdomains"
+  },
+  "howItWorks": {
+    "badge": "Lightning fast setup",
+    "title": "How it works",
+    "description": "Three simple steps to get your AI project online with a professional subdomain",
+    "step1Title": "Choose subdomain",
+    "step1Desc": "Pick any available name for your AI project",
+    "step1Details": "Type your desired subdomain and check availability instantly",
+    "step2Title": "Point to your site",
+    "step2Desc": "Enter your domain, IP, or hosting platform",
+    "step2Details": "Works with Vercel, Netlify, GitHub Pages, and more",
+    "step3Title": "You're live",
+    "step3Desc": "DNS propagates within minutes, SSL included",
+    "step3Details": "Automatic HTTPS, global CDN, and instant activation"
+  },
+  "examples": {
+    "title": "Live examples",
+    "description": "AI projects using is-an.ai subdomains",
+    "viewAll": "View all projects >"
+  },
+  "community": {
+    "title": "Open source project",
+    "description": "Contribute code, report bugs, or request features on GitHub.",
+    "contributeGithub": "Contribute on GitHub",
+    "joinDiscord": "Join Discord",
+    "buyMeACoffee": "Buy me a coffee"
+  },
+  "footer": {
+    "tagline": "Free {{domain}} subdomains for AI projects.",
+    "contributeGithub": "Contribute on GitHub",
+    "openSource": "Open source. MIT licensed.",
+    "reportAbuse": "Report Abuse",
+    "inspiredBy": "Inspired by"
+  },
+  "checker": {
+    "title": "Check Subdomain Availability",
+    "description": "Enter your desired subdomain to check if it's available",
+    "placeholder": "your-awesome-project",
+    "check": "Check",
+    "checking": "Checking...",
+    "available": "{{name}}.is-an.ai is available!",
+    "notAvailable": "{{name}}.is-an.ai is not available",
+    "errorChecking": "Error checking availability",
+    "signInPrompt": "Sign in to register your subdomain",
+    "continueWithGithub": "Continue with GitHub"
+  },
+  "createModal": {
+    "title": "Create Subdomain",
+    "subdomainName": "Subdomain Name",
+    "placeholder": "my-awesome-project",
+    "check": "Check",
+    "checking": "Checking...",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "errorChecking": "Error checking availability",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description of your project (optional)",
+    "dnsRecords": "DNS Records",
+    "addRecord": "+ Add Record",
+    "vendorTitle": "Vendor Domain Verification",
+    "vendorDesc": "Only TXT records are allowed for vendor verification subdomains. You must own the base subdomain to create this record.",
+    "validationTitle": "Please fix the following DNS record errors:",
+    "cancel": "Cancel",
+    "creating": "Creating...",
+    "create": "Create Subdomain"
+  },
+  "editModal": {
+    "title": "Edit Subdomain",
+    "subdomainName": "Subdomain Name",
+    "cannotChange": "Subdomain name cannot be changed after creation",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description of your project (optional)",
+    "dnsRecords": "DNS Records",
+    "addRecord": "+ Add Record",
+    "vendorTitle": "Vendor Domain Verification",
+    "vendorDesc": "Only TXT records are allowed for vendor verification subdomains.",
+    "validationTitle": "Please fix the following DNS record errors:",
+    "cancel": "Cancel",
+    "updating": "Updating...",
+    "update": "Update Subdomain"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcomeBack": "Welcome back, {{name}}",
+    "signOut": "Sign out",
+    "loading": "Loading...",
+    "loadingSubdomains": "Loading subdomains...",
+    "yourSubdomains": "Your Subdomains",
+    "manageSubdomains": "Manage your is-an.ai subdomains ({{count}}/{{max}})",
+    "manageSubdomainsLegacy": "Manage your is-an.ai subdomains ({{count}} total, limit: {{max}} for new accounts)",
+    "createSubdomain": "Create Subdomain",
+    "noSubdomains": "No subdomains yet",
+    "createFirst": "Create your first subdomain",
+    "created": "Created:",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete Subdomain",
+    "deleteConfirm": "Are you sure you want to delete <mono>{{name}}{{domain}}</mono>? This action cannot be undone.",
+    "deleting": "Deleting...",
+    "cancel": "Cancel",
+    "legacyNotice": "Legacy Account Notice",
+    "legacyDesc": "You have {{count}} subdomains from before our limit change. You can keep all existing subdomains, but new registrations are limited to {{max}} total. Delete some subdomains to create new ones.",
+    "limitReached": "You have reached the maximum limit of {{max}} subdomains per account. Delete an existing subdomain to create a new one.",
+    "maxSubdomains": "Maximum {{max}} subdomains allowed per account",
+    "registrarUnavailable": "New registrations are temporarily unavailable. Please try again later.",
+    "createdSuccess": "Subdomain created successfully!",
+    "updatedSuccess": "Subdomain updated successfully!",
+    "deletedSuccess": "Subdomain deleted successfully!",
+    "copiedSuccess": "Subdomain copied to clipboard!",
+    "copyFailed": "Failed to copy to clipboard",
+    "copyToClipboard": "Copy to clipboard"
+  },
+  "serviceBanner": {
+    "title": "Migration complete!",
+    "message": "We've moved from Cloudflare (3,500 capacity) to dns.he.net (10,000 capacity). New subdomain registrations are now open again."
+  },
+  "platformGuide": {
+    "setupGuide": "{{platform}} Setup Guide",
+    "nextSteps": "Next steps:",
+    "enter": "Enter {{name}}.is-an.ai",
+    "dnsPropagation": "DNS propagation takes 5-10 minutes. Please wait a moment after setting up the domain in {{platform}}."
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "ja": "日本語"
+  }
+}

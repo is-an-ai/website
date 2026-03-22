@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { CheckCircle, X } from "lucide-react";
 
 interface ServiceBannerProps {
@@ -10,6 +11,8 @@ const ServiceBanner: React.FC<ServiceBannerProps> = ({
   onClose,
   isVisible = true,
 }) => {
+  const { t } = useTranslation();
+
   if (!isVisible) return null;
 
   return (
@@ -18,10 +21,9 @@ const ServiceBanner: React.FC<ServiceBannerProps> = ({
         <div className="flex items-start sm:items-center space-x-3 flex-1 min-w-0">
           <CheckCircle className="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5 sm:mt-0" />
           <div className="text-sm text-gray-700 min-w-0 flex-1">
-            <span className="font-medium">🎉 Migration complete!</span>
+            <span className="font-medium">🎉 {t("serviceBanner.title")}</span>
             <span className="ml-1 block sm:inline">
-              We’ve moved from Cloudflare (3,500 capacity) to dns.he.net (10,000
-              capacity). New subdomain registrations are now open again.
+              {t("serviceBanner.message")}
             </span>
           </div>
         </div>

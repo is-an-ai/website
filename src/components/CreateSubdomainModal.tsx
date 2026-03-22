@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { useTranslation } from "react-i18next";
 import { CreateSubdomainRequest, DNSRecord } from "@/types/api";
 import { useSubdomainAvailability } from "@/hooks/api/useSubdomains";
 import { DOMAIN_SUFFIX } from "@/lib/constants";
@@ -50,6 +51,7 @@ const DNS_RECORD_TYPES = [
 const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
   ({ onSubmit, onNavigateToDocs, isLoading, error }) => {
     const modal = useModal();
+    const { t } = useTranslation();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -303,7 +305,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
         <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-900">
-              Create Subdomain
+              {t("createModal.title")}
             </h3>
             <button
               onClick={modal.remove}
@@ -330,7 +332,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
             {/* Subdomain Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Subdomain Name
+                {t("createModal.subdomainName")}
               </label>
               <div className="flex gap-2">
                 <div className="flex-1">
@@ -341,7 +343,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                       onChange={(e) =>
                         handleSubdomainNameChange(e.target.value)
                       }
-                      placeholder="my-awesome-project"
+                      placeholder={t("createModal.placeholder")}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       disabled={isBusy}
                     />
@@ -360,7 +362,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                   }
                   className="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium whitespace-nowrap"
                 >
-                  {isCheckingAvailability ? "Checking..." : "Check"}
+                  {isCheckingAvailability ? t("createModal.checking") : t("createModal.check")}
                 </button>
               </div>
 
@@ -380,7 +382,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                           clipRule="evenodd"
                         />
                       </svg>
-                      Available
+                      {t("createModal.available")}
                     </div>
                   )}
                   {availabilityResult?.available === false && (
@@ -396,7 +398,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                           clipRule="evenodd"
                         />
                       </svg>
-                      {availabilityResult.error || "Not available"}
+                      {availabilityResult.error || t("createModal.notAvailable")}
                     </div>
                   )}
                   {availabilityError && (
@@ -412,7 +414,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                           clipRule="evenodd"
                         />
                       </svg>
-                      Error checking availability
+                      {t("createModal.errorChecking")}
                     </div>
                   )}
                 </div>
@@ -442,7 +444,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
             {/* Description */}
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">
-                Description
+                {t("createModal.description")}
               </label>
               <textarea
                 value={formData.description}
@@ -452,7 +454,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                     description: e.target.value,
                   }))
                 }
-                placeholder="Brief description of your project (optional)"
+                placeholder={t("createModal.descriptionPlaceholder")}
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                 disabled={isBusy}
@@ -463,7 +465,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="block text-sm font-semibold text-gray-900">
-                  DNS Records
+                  {t("createModal.dnsRecords")}
                 </label>
                 <button
                   type="button"
@@ -471,7 +473,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                   className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                   disabled={isBusy}
                 >
-                  + Add Record
+                  {t("createModal.addRecord")}
                 </button>
               </div>
 
@@ -491,11 +493,9 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                       />
                     </svg>
                     <div className="text-sm text-blue-800">
-                      <p className="font-medium">Vendor Domain Verification</p>
+                      <p className="font-medium">{t("createModal.vendorTitle")}</p>
                       <p className="mt-1 text-blue-700">
-                        Only TXT records are allowed for vendor verification
-                        subdomains. You must own the base subdomain to create
-                        this record.
+                        {t("createModal.vendorDesc")}
                       </p>
                     </div>
                   </div>
@@ -583,7 +583,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                   </svg>
                   <div className="flex-1">
                     <h4 className="text-amber-800 text-sm font-medium mb-1">
-                      Please fix the following DNS record errors:
+                      {t("createModal.validationTitle")}
                     </h4>
                     <ul className="text-amber-700 text-sm space-y-1">
                       {validationErrors.map((error, index) => (
@@ -630,7 +630,7 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
                 disabled={isBusy}
               >
-                Cancel
+                {t("createModal.cancel")}
               </button>
               <button
                 type="submit"
@@ -640,10 +640,10 @@ const CreateSubdomainModal = NiceModal.create<CreateSubdomainModalProps>(
                 {isBusy ? (
                   <div className="flex items-center justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Creating...
+                    {t("createModal.creating")}
                   </div>
                 ) : (
-                  "Create Subdomain"
+                  t("createModal.create")
                 )}
               </button>
             </div>

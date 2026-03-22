@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import SubdomainChecker from "./SubdomainChecker";
 import TypingAnimation from "./TypingAnimation";
 import { useAuth } from "@/hooks/api/useAuth";
@@ -7,6 +8,7 @@ import { DOMAIN_SUFFIX } from "@/lib/constants";
 
 const HeroSection = () => {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-32 bg-gradient-to-br from-white via-gray-50 to-cyan-50 overflow-hidden">
@@ -36,7 +38,7 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <span className="mr-2">🤖</span>
-              Free {DOMAIN_SUFFIX} subdomains for AI projects
+              {t("hero.badge", { domain: DOMAIN_SUFFIX })}
             </motion.span>
 
             <motion.h1
@@ -75,24 +77,28 @@ const HeroSection = () => {
               className="space-y-4"
             >
               <p className="text-lg sm:text-xl text-gray-700 mb-4 max-w-3xl mx-auto px-4 sm:px-0 font-medium">
-                Free subdomains for AI projects. No DNS config, no waiting.
+                {t("hero.subtitle")}
               </p>
               <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
                   <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                  Instant setup
+                  {t("hero.instantSetup")}
                 </div>
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
                   <span className="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
-                  Free SSL
+                  {t("hero.freeSSL")}
                 </div>
                 <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
                   <span className="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
-                  Global CDN
+                  {t("hero.globalCDN")}
+                </div>
+                <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                  {t("hero.staticHosting")}
                 </div>
               </div>
               <p className="text-sm text-gray-500 font-mono mt-4">
-                Just like is-a.dev, but for AI stuff.
+                {t("hero.tagline")}
               </p>
             </motion.div>
           </motion.div>
@@ -122,7 +128,7 @@ const HeroSection = () => {
                   className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 transition-all duration-300 font-mono shadow-lg hover:shadow-xl"
                 >
                   <span className="mr-2">🚀</span>
-                  Go to Dashboard
+                  {t("hero.goToDashboard")}
                 </Link>
               </motion.div>
               <motion.div
@@ -130,7 +136,7 @@ const HeroSection = () => {
                 whileHover={{ scale: 1.02 }}
               >
                 <span className="w-2 h-2 bg-cyan-400 rounded-full mr-2 animate-pulse"></span>
-                Manage your subdomains
+                {t("hero.manageSubdomains")}
               </motion.div>
             </motion.div>
           )}

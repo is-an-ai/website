@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ExampleCard from "./ExampleCard";
 
 const PREDEFINED_EXAMPLES = [
@@ -21,14 +22,16 @@ const PREDEFINED_EXAMPLES = [
 ];
 
 const ExamplesSection = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-12 sm:py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 font-mono">
-            Live examples
+            {t("examples.title")}
           </h2>
-          <p className="text-gray-600">AI projects using is-an.ai subdomains</p>
+          <p className="text-gray-600">{t("examples.description")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -46,7 +49,7 @@ const ExamplesSection = () => {
             to="/examples"
             className="text-sm text-gray-600 hover:text-gray-900 underline hover:no-underline font-mono"
           >
-            View all projects &gt;
+            {t("examples.viewAll")}
           </Link>
         </div>
       </div>

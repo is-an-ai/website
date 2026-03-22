@@ -1,4 +1,5 @@
 import NiceModal, { useModal } from "@ebay/nice-modal-react";
+import { useTranslation } from "react-i18next";
 import { PlatformGuidance } from "@/lib/platformDetection";
 import { PSL_WARNINGS } from "@/lib/pslWarnings";
 
@@ -11,6 +12,7 @@ interface PlatformGuidanceModalProps {
 const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
   ({ guidance, subdomainName, onViewDocs }) => {
     const modal = useModal();
+    const { t } = useTranslation();
 
     const handleViewDocs = () => {
       onViewDocs?.();
@@ -30,7 +32,7 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
                 </span>
               </div>
               <h3 className="text-lg font-bold text-gray-900">
-                {guidance.platform} Setup Guide
+                {t("platformGuide.setupGuide", { platform: guidance.platform })}
               </h3>
             </div>
             <button
@@ -103,7 +105,7 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-2">Next steps:</h4>
+              <h4 className="font-medium text-gray-900 mb-2">{t("platformGuide.nextSteps")}</h4>
               <ol className="space-y-2">
                 {guidance.steps.map((step, index) => (
                   <li
@@ -121,7 +123,7 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
                     ✓
                   </span>
                   <span className="font-medium">
-                    Enter {subdomainName}.is-an.ai
+                    {t("platformGuide.enter", { name: subdomainName })}
                   </span>
                 </li>
               </ol>
@@ -129,8 +131,7 @@ const PlatformGuidanceModal = NiceModal.create<PlatformGuidanceModalProps>(
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-blue-800 text-sm">
-                💡 DNS propagation takes 5-10 minutes. Please wait a moment
-                after setting up the domain in {guidance.platform}.
+                💡 {t("platformGuide.dnsPropagation", { platform: guidance.platform })}
               </p>
             </div>
 

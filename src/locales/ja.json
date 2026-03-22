@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "docs": "ドキュメント",
+    "examples": "事例",
+    "blog": "ブログ",
+    "github": "GitHub"
+  },
+  "hero": {
+    "badge": "AIプロジェクト向けの無料 {{domain}} サブドメイン",
+    "subtitle": "AIプロジェクト向けの無料サブドメイン。DNS設定不要、待ち時間なし。",
+    "tagline": "is-a.devのようなサービス、AI向け。",
+    "instantSetup": "即時セットアップ",
+    "freeSSL": "無料SSL",
+    "globalCDN": "グローバルCDN",
+    "staticHosting": "静的ホスティング",
+    "goToDashboard": "ダッシュボードへ",
+    "manageSubdomains": "サブドメインを管理"
+  },
+  "howItWorks": {
+    "badge": "超高速セットアップ",
+    "title": "使い方",
+    "description": "3つの簡単なステップで、AIプロジェクトをプロフェッショナルなサブドメインで公開",
+    "step1Title": "サブドメインを選択",
+    "step1Desc": "AIプロジェクトに好きな名前を選びましょう",
+    "step1Details": "希望のサブドメインを入力して、すぐに空き状況を確認",
+    "step2Title": "サイトに接続",
+    "step2Desc": "ドメイン、IP、またはホスティングプラットフォームを入力",
+    "step2Details": "Vercel、Netlify、GitHub Pagesなどに対応",
+    "step3Title": "公開完了",
+    "step3Desc": "DNSは数分で反映、SSL付き",
+    "step3Details": "自動HTTPS、グローバルCDN、即時有効化"
+  },
+  "examples": {
+    "title": "公開中の事例",
+    "description": "is-an.aiサブドメインを使用しているAIプロジェクト",
+    "viewAll": "すべてのプロジェクトを見る >"
+  },
+  "community": {
+    "title": "オープンソースプロジェクト",
+    "description": "GitHubでコードの貢献、バグ報告、機能リクエストができます。",
+    "contributeGithub": "GitHubで貢献する",
+    "joinDiscord": "Discordに参加",
+    "buyMeACoffee": "コーヒーをおごる"
+  },
+  "footer": {
+    "tagline": "AIプロジェクト向けの無料 {{domain}} サブドメイン。",
+    "contributeGithub": "GitHubで貢献する",
+    "openSource": "オープンソース。MITライセンス。",
+    "reportAbuse": "不正利用を報告",
+    "inspiredBy": "インスピレーション元"
+  },
+  "checker": {
+    "title": "サブドメインの空き状況を確認",
+    "description": "希望のサブドメインを入力して、利用可能か確認しましょう",
+    "placeholder": "あなたのプロジェクト名",
+    "check": "確認",
+    "checking": "確認中...",
+    "available": "{{name}}.is-an.ai は利用可能です！",
+    "notAvailable": "{{name}}.is-an.ai は利用できません",
+    "errorChecking": "空き状況の確認中にエラーが発生しました",
+    "signInPrompt": "サブドメインを登録するにはログインしてください",
+    "continueWithGithub": "GitHubでログイン"
+  },
+  "createModal": {
+    "title": "サブドメインを作成",
+    "subdomainName": "サブドメイン名",
+    "placeholder": "私のプロジェクト",
+    "check": "確認",
+    "checking": "確認中...",
+    "available": "利用可能",
+    "notAvailable": "利用不可",
+    "errorChecking": "空き状況の確認中にエラーが発生しました",
+    "description": "説明",
+    "descriptionPlaceholder": "プロジェクトの簡単な説明（任意）",
+    "dnsRecords": "DNSレコード",
+    "addRecord": "+ レコードを追加",
+    "vendorTitle": "ベンダードメイン検証",
+    "vendorDesc": "ベンダー検証サブドメインではTXTレコードのみ許可されています。このレコードを作成するにはベースサブドメインを所有している必要があります。",
+    "validationTitle": "以下のDNSレコードエラーを修正してください：",
+    "cancel": "キャンセル",
+    "creating": "作成中...",
+    "create": "サブドメインを作成"
+  },
+  "editModal": {
+    "title": "サブドメインを編集",
+    "subdomainName": "サブドメイン名",
+    "cannotChange": "作成後にサブドメイン名は変更できません",
+    "description": "説明",
+    "descriptionPlaceholder": "プロジェクトの簡単な説明（任意）",
+    "dnsRecords": "DNSレコード",
+    "addRecord": "+ レコードを追加",
+    "vendorTitle": "ベンダードメイン検証",
+    "vendorDesc": "ベンダー検証サブドメインではTXTレコードのみ許可されています。",
+    "validationTitle": "以下のDNSレコードエラーを修正してください：",
+    "cancel": "キャンセル",
+    "updating": "更新中...",
+    "update": "サブドメインを更新"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "welcomeBack": "おかえりなさい、{{name}}",
+    "signOut": "ログアウト",
+    "loading": "読み込み中...",
+    "loadingSubdomains": "サブドメインを読み込み中...",
+    "yourSubdomains": "あなたのサブドメイン",
+    "manageSubdomains": "is-an.aiサブドメインを管理（{{count}}/{{max}}）",
+    "manageSubdomainsLegacy": "is-an.aiサブドメインを管理（合計{{count}}個、新規アカウント上限：{{max}}）",
+    "createSubdomain": "サブドメインを作成",
+    "noSubdomains": "サブドメインはまだありません",
+    "createFirst": "最初のサブドメインを作成",
+    "created": "作成日：",
+    "edit": "編集",
+    "delete": "削除",
+    "deleteTitle": "サブドメインを削除",
+    "deleteConfirm": "<mono>{{name}}{{domain}}</mono> を削除してもよろしいですか？この操作は取り消せません。",
+    "deleting": "削除中...",
+    "cancel": "キャンセル",
+    "legacyNotice": "旧アカウントのお知らせ",
+    "legacyDesc": "制限変更前に{{count}}個のサブドメインをお持ちです。既存のサブドメインはすべて保持できますが、新規登録は合計{{max}}個までに制限されています。新しく作成するには既存のサブドメインを削除してください。",
+    "limitReached": "アカウントごとのサブドメイン上限（{{max}}個）に達しました。新しく作成するには既存のサブドメインを削除してください。",
+    "maxSubdomains": "アカウントごとに最大{{max}}個のサブドメインが許可されています",
+    "registrarUnavailable": "新規登録は一時的に利用できません。後でもう一度お試しください。",
+    "createdSuccess": "サブドメインが作成されました！",
+    "updatedSuccess": "サブドメインが更新されました！",
+    "deletedSuccess": "サブドメインが削除されました！",
+    "copiedSuccess": "サブドメインをクリップボードにコピーしました！",
+    "copyFailed": "クリップボードへのコピーに失敗しました",
+    "copyToClipboard": "クリップボードにコピー"
+  },
+  "serviceBanner": {
+    "title": "移行完了！",
+    "message": "Cloudflare（3,500件）からdns.he.net（10,000件）に移行しました。新しいサブドメインの登録が再開されました。"
+  },
+  "platformGuide": {
+    "setupGuide": "{{platform}} セットアップガイド",
+    "nextSteps": "次のステップ：",
+    "enter": "{{name}}.is-an.ai を入力",
+    "dnsPropagation": "DNS反映には5〜10分かかります。{{platform}}でドメインを設定した後、しばらくお待ちください。"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "ja": "日本語"
+  }
+}

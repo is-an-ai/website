@@ -6,6 +6,8 @@ import {
   DeleteResponse,
   ApiError,
   SubdomainAvailabilityResponse,
+  HostingResponse,
+  HostingStatus,
 } from "@/types/api";
 import {
   API_BASE_URL,
@@ -192,6 +194,80 @@ class ApiClient {
     return this.request<DeleteResponse>(API_ENDPOINTS.DELETE_DOMAIN(name), {
       method: "DELETE",
     });
+  }
+
+  // Hosting methods
+  async deployHosting(
+    name: string,
+    files: FileList | File[]
+  ): Promise<HostingResponse> {
+    this.loadToken();
+
+    const formData = new FormData();
+    formData.append("subdomain", name);
+
+    const fileArray = Array.from(files);
+    for (const file of fileArray) {
+      // Strip the top-level folder name from webkitRelativePath
+      const relativePath = file.webkitRelativePath;
+      const pathWithoutRoot = relativePath
+        ? relativePath.split("/").slice(1).join("/")
+        : file.name;
+      formData.append("files", file, pathWithoutRoot);
+    }
+
+    const url = `${this.baseUrl}${API_ENDPOINTS.HOSTING}`;
+    const token = this.getToken() ?? this.token;
+
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData: ApiError = await response.json().catch(() => ({
+          code: response.status,
+          message: response.statusText || "Unknown error",
+        }));
+
+        if (errorData.code === HTTP_STATUS.UNAUTHORIZED) {
+          this.clearToken();
+        }
+
+        throw errorData;
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw {
+          code: 0,
+          message: error.message,
+        } as ApiError;
+      }
+      throw error;
+    }
+  }
+
+  async getHosting(name: string): Promise<HostingStatus> {
+    return this.request<HostingStatus>(API_ENDPOINTS.HOSTING_BY_NAME(name));
+  }
+
+  async deleteHosting(name: string): Promise<void> {
+    return this.request<void>(API_ENDPOINTS.HOSTING_BY_NAME(name), {
+      method: "DELETE",
+    });
+  }
+
+  async getMyHostings(): Promise<HostingStatus[]> {
+    return this.request<HostingStatus[]>(API_ENDPOINTS.MY_HOSTINGS);
   }
 }
 

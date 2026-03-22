@@ -31,6 +31,11 @@ export const API_ENDPOINTS = {
   DELETE_DOMAIN: (name: string) => `/v3/domain/${name}`,
   CREATE_DOMAIN: "/v3/domain",
   DOMAIN_AVAILABILITY_V2: (name: string) => `/v2/domain/available/${name}`,
+
+  // Hosting
+  HOSTING: "/v3/hosting",
+  MY_HOSTINGS: "/v3/hosting/my",
+  HOSTING_BY_NAME: (name: string) => `/v3/hosting/${name}`,
 } as const;
 
 // Toast Configuration

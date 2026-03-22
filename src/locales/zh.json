@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "dashboard": "控制台",
+    "docs": "文档",
+    "examples": "示例",
+    "blog": "博客",
+    "github": "GitHub"
+  },
+  "hero": {
+    "badge": "为 AI 项目提供免费的 {{domain}} 子域名",
+    "subtitle": "为 AI 项目提供免费子域名。无需 DNS 配置，无需等待。",
+    "tagline": "就像 is-a.dev，但是用于 AI。",
+    "instantSetup": "即时设置",
+    "freeSSL": "免费 SSL",
+    "globalCDN": "全球 CDN",
+    "staticHosting": "静态托管",
+    "goToDashboard": "前往控制台",
+    "manageSubdomains": "管理你的子域名"
+  },
+  "howItWorks": {
+    "badge": "闪电般的快速设置",
+    "title": "使用方法",
+    "description": "三个简单步骤，让你的 AI 项目使用专业子域名上线",
+    "step1Title": "选择子域名",
+    "step1Desc": "为你的 AI 项目选择任意可用名称",
+    "step1Details": "输入你想要的子域名并立即检查是否可用",
+    "step2Title": "指向你的网站",
+    "step2Desc": "输入你的域名、IP 或托管平台",
+    "step2Details": "支持 Vercel、Netlify、GitHub Pages 等平台",
+    "step3Title": "上线了",
+    "step3Desc": "DNS 几分钟内生效，包含 SSL",
+    "step3Details": "自动 HTTPS、全球 CDN 和即时激活"
+  },
+  "examples": {
+    "title": "在线示例",
+    "description": "使用 is-an.ai 子域名的 AI 项目",
+    "viewAll": "查看所有项目 >"
+  },
+  "community": {
+    "title": "开源项目",
+    "description": "在 GitHub 上贡献代码、报告 Bug 或请求新功能。",
+    "contributeGithub": "在 GitHub 上贡献",
+    "joinDiscord": "加入 Discord",
+    "buyMeACoffee": "请我喝杯咖啡"
+  },
+  "footer": {
+    "tagline": "为 AI 项目提供免费的 {{domain}} 子域名。",
+    "contributeGithub": "在 GitHub 上贡献",
+    "openSource": "开源项目。MIT 许可证。",
+    "reportAbuse": "举报滥用",
+    "inspiredBy": "灵感来自"
+  },
+  "checker": {
+    "title": "检查子域名可用性",
+    "description": "输入你想要的子域名，检查是否可用",
+    "placeholder": "你的项目名称",
+    "check": "检查",
+    "checking": "检查中...",
+    "available": "{{name}}.is-an.ai 可用！",
+    "notAvailable": "{{name}}.is-an.ai 不可用",
+    "errorChecking": "检查可用性时出错",
+    "signInPrompt": "登录以注册你的子域名",
+    "continueWithGithub": "使用 GitHub 继续"
+  },
+  "createModal": {
+    "title": "创建子域名",
+    "subdomainName": "子域名",
+    "placeholder": "我的项目",
+    "check": "检查",
+    "checking": "检查中...",
+    "available": "可用",
+    "notAvailable": "不可用",
+    "errorChecking": "检查可用性时出错",
+    "description": "描述",
+    "descriptionPlaceholder": "项目简介（可选）",
+    "dnsRecords": "DNS 记录",
+    "addRecord": "+ 添加记录",
+    "vendorTitle": "供应商域名验证",
+    "vendorDesc": "供应商验证子域名仅允许 TXT 记录。你必须拥有基础子域名才能创建此记录。",
+    "validationTitle": "请修复以下 DNS 记录错误：",
+    "cancel": "取消",
+    "creating": "创建中...",
+    "create": "创建子域名"
+  },
+  "editModal": {
+    "title": "编辑子域名",
+    "subdomainName": "子域名",
+    "cannotChange": "创建后无法更改子域名",
+    "description": "描述",
+    "descriptionPlaceholder": "项目简介（可选）",
+    "dnsRecords": "DNS 记录",
+    "addRecord": "+ 添加记录",
+    "vendorTitle": "供应商域名验证",
+    "vendorDesc": "供应商验证子域名仅允许 TXT 记录。",
+    "validationTitle": "请修复以下 DNS 记录错误：",
+    "cancel": "取消",
+    "updating": "更新中...",
+    "update": "更新子域名"
+  },
+  "dashboard": {
+    "title": "控制台",
+    "welcomeBack": "欢迎回来，{{name}}",
+    "signOut": "退出登录",
+    "loading": "加载中...",
+    "loadingSubdomains": "加载子域名中...",
+    "yourSubdomains": "你的子域名",
+    "manageSubdomains": "管理你的 is-an.ai 子域名（{{count}}/{{max}}）",
+    "manageSubdomainsLegacy": "管理你的 is-an.ai 子域名（共 {{count}} 个，新账户限制：{{max}}）",
+    "createSubdomain": "创建子域名",
+    "noSubdomains": "还没有子域名",
+    "createFirst": "创建你的第一个子域名",
+    "created": "创建时间：",
+    "edit": "编辑",
+    "delete": "删除",
+    "deleteTitle": "删除子域名",
+    "deleteConfirm": "确定要删除 <mono>{{name}}{{domain}}</mono> 吗？此操作无法撤销。",
+    "deleting": "删除中...",
+    "cancel": "取消",
+    "legacyNotice": "旧账户通知",
+    "legacyDesc": "你在限制变更前有 {{count}} 个子域名。你可以保留所有现有子域名，但新注册限制为 {{max}} 个。删除一些子域名才能创建新的。",
+    "limitReached": "你已达到每个账户最多 {{max}} 个子域名的限制。删除现有子域名才能创建新的。",
+    "maxSubdomains": "每个账户最多允许 {{max}} 个子域名",
+    "registrarUnavailable": "新注册暂时不可用，请稍后再试。",
+    "createdSuccess": "子域名创建成功！",
+    "updatedSuccess": "子域名更新成功！",
+    "deletedSuccess": "子域名删除成功！",
+    "copiedSuccess": "子域名已复制到剪贴板！",
+    "copyFailed": "复制到剪贴板失败",
+    "copyToClipboard": "复制到剪贴板"
+  },
+  "serviceBanner": {
+    "title": "迁移完成！",
+    "message": "我们已从 Cloudflare（3,500 容量）迁移到 dns.he.net（10,000 容量）。新的子域名注册已重新开放。"
+  },
+  "platformGuide": {
+    "setupGuide": "{{platform}} 设置指南",
+    "nextSteps": "下一步：",
+    "enter": "输入 {{name}}.is-an.ai",
+    "dnsPropagation": "DNS 传播需要 5-10 分钟。请在 {{platform}} 中设置域名后稍等片刻。"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "ja": "日本語"
+  }
+}
